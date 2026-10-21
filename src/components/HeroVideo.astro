@@ -1,0 +1,316 @@
+---
+import { Image } from "astro:assets";
+import poster from "../assets/media/calm-sea-waves-poster.jpg";
+import { DEMO_TIMELINE } from "../config/demo";
+
+interface Props {
+  posterURL: string;
+}
+
+const { posterURL } = Astro.props;
+const [titleInStart, titleInEnd] = DEMO_TIMELINE.titleIn;
+const [quoteInStart, quoteInEnd] = DEMO_TIMELINE.quoteIn;
+const [fadeOutStart, fadeOutEnd] = DEMO_TIMELINE.sharedFadeOut;
+const [listInStart, listInEnd] = DEMO_TIMELINE.listIn;
+const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${titleInEnd - titleInStart}ms;--quote-in-start:${quoteInStart}ms;--quote-in-duration:${quoteInEnd - quoteInStart}ms;--fade-out-start:${fadeOutStart}ms;--fade-out-duration:${fadeOutEnd - fadeOutStart}ms;--list-in-start:${listInStart}ms;--list-in-duration:${listInEnd - listInStart}ms;`;
+---
+
+<main class="landing" data-demo-root style={timelineStyle}>
+  <div class="media" aria-hidden="true">
+    <Image
+      class="poster"
+      src={poster}
+      alt=""
+      loading="eager"
+      fetchpriority="high"
+      format="webp"
+    />
+    <video
+      data-demo-video
+      class="video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster={posterURL}></video>
+  </div>
+  <div class="scrim" aria-hidden="true"></div>
+  <section class="intro" aria-label="L'Ouvriere">
+    <div class="title-lock"><h1>L'Ouvriere</h1></div>
+    <div class="intro-copy">
+      <p class="quote"><em>La pleine mer en pleine terre</em></p><p
+        class="attribution"
+      >
+        G.Pudlowski
+      </p>
+    </div>
+  </section>
+  <section
+    class="menu"
+    data-demo-menu
+    tabindex="-1"
+    aria-label="Navigation de présentation"
+  >
+    <ul><li>L'univers</li><li>La maison</li><li>Offre du moment</li></ul>
+  </section>
+  <div class="controls">
+    <button type="button" data-intro-skip aria-hidden="true" tabindex="-1"
+      >Passer l'introduction</button
+    ><button type="button" data-video-toggle hidden
+      >Lecture / pause de la vidéo</button
+    ><a href="#mentions">Mentions</a>
+  </div>
+  <aside id="mentions" class="legal"><p>Visuel : Pexels.</p></aside>
+</main>
+
+<script>
+  import "../scripts/demo";
+</script>
+
+<style>
+  .landing {
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    background: #16252c;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+    isolation: isolate;
+  }
+  .media,
+  .scrim {
+    position: absolute;
+    inset: -10px;
+  }
+  .media {
+    overflow: hidden;
+    z-index: -2;
+  }
+  .poster,
+  .video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(3px);
+    transform: scale(1.025);
+  }
+  .video {
+    position: absolute;
+    inset: 0;
+  }
+  .scrim {
+    z-index: -1;
+    background: rgba(5, 15, 20, 0.34);
+  }
+  .intro,
+  .menu {
+    min-height: 100svh;
+    display: grid;
+    padding: 2rem;
+  }
+  .intro {
+    position: relative;
+  }
+  h1 {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    transform: translateY(-50%);
+    text-align: center;
+    font-size: clamp(3.4rem, 11vw, 9rem);
+    font-weight: 400;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+  }
+  .intro-copy {
+    position: absolute;
+    top: calc(50% + clamp(2.7rem, 6vw, 5.2rem));
+    left: 0;
+    width: 100%;
+    text-align: center;
+  }
+  .quote {
+    margin: 0 0 0.2rem;
+    font-size: clamp(1.1rem, 2vw, 1.65rem);
+  }
+  .attribution {
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.13em;
+  }
+  .menu {
+    position: absolute;
+    inset: 0;
+    place-items: end start;
+    pointer-events: none;
+  }
+  .menu ul {
+    list-style: disc;
+    margin: 0 0 8vh 8vw;
+    padding-left: 1.2rem;
+    font-size: clamp(1.35rem, 3vw, 2.3rem);
+    line-height: 1.65;
+  }
+  .controls {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    display: flex;
+    gap: 0.8rem;
+    font-family: system-ui, sans-serif;
+    font-size: 0.75rem;
+  }
+  button,
+  .controls a {
+    color: inherit;
+    background: transparent;
+    border: 0;
+    padding: 0.4rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  button:focus-visible,
+  .controls a:focus-visible,
+  .menu:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+  .legal {
+    position: absolute;
+    left: -9999px;
+  }
+  .legal:target {
+    left: 1rem;
+    bottom: 3rem;
+    margin: 0;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.72);
+    font-family: system-ui, sans-serif;
+    font-size: 0.75rem;
+  }
+  [data-demo-root].is-enhanced .poster,
+  [data-demo-root].is-enhanced .video {
+    filter: blur(0);
+    animation: media-blur var(--title-in-duration) var(--title-in-start) ease
+      both;
+  }
+  [data-demo-root].is-enhanced h1 {
+    animation: title-in var(--title-in-duration) var(--title-in-start) ease both;
+  }
+  [data-demo-root].is-enhanced .title-lock {
+    animation: intro-copy var(--fade-out-duration) var(--fade-out-start) ease
+      both;
+  }
+  [data-demo-root].is-enhanced .intro-copy {
+    animation: intro-copy var(--fade-out-duration) var(--fade-out-start) ease
+      both;
+  }
+  [data-demo-root].is-enhanced .quote,
+  [data-demo-root].is-enhanced .attribution {
+    animation: quote-in var(--quote-in-duration) var(--quote-in-start) ease both;
+    opacity: 0;
+  }
+  [data-demo-root].is-enhanced .menu {
+    opacity: 0;
+    animation: menu-in var(--list-in-duration) var(--list-in-start) ease both;
+  }
+  [data-demo-root].is-complete .intro {
+    display: none;
+  }
+  [data-demo-root].is-complete .menu {
+    opacity: 1;
+    animation: none;
+  }
+  [data-demo-root].is-complete.is-enhanced [data-intro-skip] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  [data-intro-skip] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  [data-demo-root].is-enhanced [data-intro-skip] {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  @keyframes media-blur {
+    to {
+      filter: blur(3px);
+    }
+  }
+  @keyframes title-in {
+    from {
+      opacity: 0;
+      transform: translateY(calc(-50% + 0.3em));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(-50%);
+    }
+  }
+  @keyframes quote-in {
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes intro-copy {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+  @keyframes menu-in {
+    to {
+      opacity: 1;
+    }
+  }
+  @media (max-height: 30rem) {
+    [data-demo-root]:not(.is-enhanced) h1 {
+      top: 20%;
+      font-size: clamp(2.4rem, 8vw, 4rem);
+    }
+    [data-demo-root]:not(.is-enhanced) .intro-copy {
+      top: calc(20% + clamp(2rem, 3vw, 2.8rem));
+    }
+    [data-demo-root]:not(.is-enhanced) .menu ul {
+      margin: 0 0 1rem 2.5rem;
+      font-size: clamp(1.1rem, 2.6vw, 1.55rem);
+      line-height: 1.45;
+    }
+  }
+  @media (max-height: 20rem) {
+    [data-demo-root]:not(.is-enhanced) {
+      overflow-y: auto;
+    }
+    [data-demo-root]:not(.is-enhanced) .intro,
+    [data-demo-root]:not(.is-enhanced) .menu {
+      position: static;
+      display: block;
+      min-height: 0;
+      padding: 1rem;
+    }
+    [data-demo-root]:not(.is-enhanced) h1,
+    [data-demo-root]:not(.is-enhanced) .intro-copy {
+      position: static;
+      transform: none;
+      width: auto;
+      text-align: center;
+    }
+    [data-demo-root]:not(.is-enhanced) h1 {
+      font-size: 2rem;
+    }
+    [data-demo-root]:not(.is-enhanced) .intro-copy {
+      margin-top: 0.75rem;
+    }
+    [data-demo-root]:not(.is-enhanced) .menu ul {
+      margin: 0;
+    }
+    [data-demo-root]:not(.is-enhanced) .controls {
+      position: static;
+      justify-content: end;
+      padding: 0 1rem 1rem;
+    }
+  }
+</style>
