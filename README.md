@@ -69,7 +69,8 @@ The prototype must emit `noindex, nofollow` metadata on every generated HTML pag
 an indexing directive and does not guarantee crawler behavior. A custom domain and Cloudflare
 Pages deployment are later steps; the initial demo remains on the GitHub Pages URL.
 
-Before publication, complete the legal adaptation separately: confirm the publisher and
-publication director, reconcile the C2J registry details, approve the public contact, and
-replace stale AWS/Zenchef wording. Those unresolved fields are recorded in the planning
-research and block publication of the legal disclosure.
+The interim prototype must implement an accessible legal disclosure using the current website
+legal text verbatim, including its identifiers, blank fields, AWS host wording and Zenchef
+webmaster wording. The exact snapshot is recorded in the planning research. Publisher
+reconciliation and host wording adaptation are deferred, but the verbatim disclosure remains
+required before publication.

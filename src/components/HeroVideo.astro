@@ -8,6 +8,8 @@ interface Props {
 }
 
 const { posterURL } = Astro.props;
+const webmasterLine =
+  "Zenchef - 63 avenue de Villiers 75017 Paris – webmaster{at}zenchef.com";
 const [titleInStart, titleInEnd] = DEMO_TIMELINE.titleIn;
 const [quoteInStart, quoteInEnd] = DEMO_TIMELINE.quoteIn;
 const [fadeOutStart, fadeOutEnd] = DEMO_TIMELINE.sharedFadeOut;
@@ -58,9 +60,33 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       >Passer l'introduction</button
     ><button type="button" data-video-toggle hidden
       >Lecture / pause de la vidéo</button
-    ><a href="#mentions">Mentions</a>
+    ><a id="mentions-trigger" href="#mentions">Mentions</a>
   </div>
-  <aside id="mentions" class="legal"><p>Visuel : Pexels.</p></aside>
+  <aside
+    id="mentions"
+    class="legal"
+    tabindex="-1"
+    aria-labelledby="legal-title"
+  >
+    <a class="legal-close" href="#mentions-trigger">Fermer les mentions</a>
+    <h2 id="legal-title">Mentions légales</h2>
+    <h3>1/ Editeur du site www.louvriererestaurant.com</h3>
+    <p>
+      C2J, Sasu, au capital de 1000 euros, immatriculée au RCS de Poitiers sous
+      le numéro Poitiers B 901 171 264, Siret n° 94216471600022, ayant son siège
+      social au 5 bis place de la Mairie, 86360 Montamisé, numéro de TVA :
+      FR05942164716, n° tel : -, email : -
+    </p>
+    <p>Directeur de la publication : - / -.</p>
+    <h3>2/ Hébergeur</h3>
+    <p>
+      Amazon Web Services EMEA SARL (AWS Europe), 4033 Citywest Avenue, Cooldown
+      Commons, County Dublin, IRELAND https://aws.amazon.com
+    </p>
+    <h3>3/ Webmaster</h3>
+    <p>{webmasterLine}</p>
+    <p class="media-credit">Visuel : Pexels.</p>
+  </aside>
 </main>
 
 <script>
@@ -180,15 +206,35 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   .legal {
     position: absolute;
     left: -9999px;
+    visibility: hidden;
   }
   .legal:target {
+    z-index: 1;
+    inset: 1rem;
     left: 1rem;
-    bottom: 3rem;
     margin: 0;
-    padding: 0.75rem;
+    padding: 1.25rem;
     background: rgba(0, 0, 0, 0.72);
     font-family: system-ui, sans-serif;
     font-size: 0.75rem;
+    line-height: 1.5;
+    overflow: auto;
+    visibility: visible;
+  }
+  .legal h2,
+  .legal h3,
+  .legal p {
+    margin: 0 0 1rem;
+  }
+  .legal h2 {
+    font-size: 1.1rem;
+  }
+  .legal h3 {
+    font-size: 0.85rem;
+  }
+  .legal-close {
+    float: right;
+    color: inherit;
   }
   [data-demo-root].is-enhanced .poster,
   [data-demo-root].is-enhanced .video {

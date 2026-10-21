@@ -77,6 +77,8 @@ Build with `nix build .#` or the commands in the repository README. GitHub Pages
 the Nix result at `/ouvriere/`; check the generated paths after every Astro configuration
 change. Keep `noindex, nofollow` metadata until an explicit production migration.
 
-Legal publication remains blocked until the editor/operator, publication director, public
-contact and final host wording are confirmed. The current website's AWS and Zenchef entries
-describe the prior setup and must not be copied into the prototype without verification.
+The interim prototype must implement an accessible legal disclosure using the current website
+legal text verbatim, including its identifiers, blank fields, AWS host wording and Zenchef
+webmaster wording. The exact source snapshot is recorded in the planning research. Publisher
+reconciliation and host wording adaptation are deferred, but the verbatim disclosure remains
+required before publication.
