@@ -1,30 +1,32 @@
-media:
-  input: public
-  output: /
 content:
-  - name: posts
-    label: Posts
-    type: collection
-    path: src/content/blog
-    view:
-      fields: [ title, draft, date ]
-    fields:
-      - { name: author, label: Author, type: string }
-      - { name: pubDatetime, label: Date, type: date }
-      - { name: modDatetime, label: Date, type: date }
-      - { name: title, label: Title, type: string, required: true }
-      - { name: ogImage, label: Title, type: string }
-      - { name: slug, label: Slug, type: string }
-      - { name: featured, label: Featured, type: boolean }
-      - { name: draft, label: Draft, type: boolean }
-      - { name: tags, label: Tags, type: string, list: true }
-      - { name: description, label: Description, type: string }
-      - { name: body, label: Body, type: rich-text }
-  - name: about
-    label: About page
+  - name: landing
+    label: Page d’accueil
     type: file
-    path: src/pages/about.md
+    path: src/data/landing.json
+    format: json
     fields:
-      - { name: layout, type: string, hidden: true, default: "../layouts/AboutLayout.astro" }
-      - { name: title, label: Title, type: string }
-      - { name: body, label: Body, type: rich-text, options: { input: public/assets, output: /assets } }
+      - name: menuLabels
+        label: Menu
+        type: string
+        required: true
+        list:
+          min: 3
+          max: 3
+        options:
+          minlength: 1
+          maxlength: 80
+      - name: video
+        label: Vidéo
+        type: object
+        required: true
+        fields:
+          - name: streamUid
+            label: Identifiant Cloudflare Stream
+            type: string
+            required: true
+            pattern:
+              regex: "^[a-f0-9]{32}$"
+              message: "L’identifiant doit contenir 32 caractères hexadécimaux minuscules."
+            options:
+              minlength: 32
+              maxlength: 32

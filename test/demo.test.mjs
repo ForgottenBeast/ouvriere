@@ -17,13 +17,14 @@ test("the intro uses the approved finite timing contract", () => {
   });
 });
 
-test("the display-only menu uses the approved cuisine label", async () => {
-  const component = await readFile(
-    new URL("../src/components/HeroVideo.astro", import.meta.url),
-    "utf8"
-  );
-  assert.match(component, />La cuisine<\/li>/);
-  assert.doesNotMatch(component, />La maison<\/li>/);
+test("the display-only menu reads its approved cuisine label from landing data", async () => {
+  const [component, landing] = await Promise.all([
+    readFile(new URL("../src/components/HeroVideo.astro", import.meta.url), "utf8"),
+    readFile(new URL("../src/data/landing.json", import.meta.url), "utf8"),
+  ]);
+  assert.match(component, /landing\.menuLabels\[1\]/);
+  assert.match(landing, /"La cuisine"/);
+  assert.doesNotMatch(landing, /"La maison"/);
 });
 
 test("video sources require both a URL and permission to use media", () => {

@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import poster from "../assets/media/calm-sea-waves-poster.jpg";
 import { DEMO_TIMELINE } from "../config/demo";
+import { landing } from "../data/landing";
 
 interface Props {
   posterURL: string;
@@ -55,10 +56,14 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
     aria-label="Navigation de présentation"
   >
     <ul>
-      <li style={menuItemStyle(DEMO_TIMELINE.menuItemIn[0])}>L'univers</li>
-      <li style={menuItemStyle(DEMO_TIMELINE.menuItemIn[1])}>La cuisine</li>
+      <li style={menuItemStyle(DEMO_TIMELINE.menuItemIn[0])}>
+        {landing.menuLabels[0]}
+      </li>
+      <li style={menuItemStyle(DEMO_TIMELINE.menuItemIn[1])}>
+        {landing.menuLabels[1]}
+      </li>
       <li style={menuItemStyle(DEMO_TIMELINE.menuItemIn[2])}>
-        Offre du moment
+        {landing.menuLabels[2]}
       </li>
     </ul>
   </section>
