@@ -32,15 +32,23 @@ const initialise = () => {
   const detachVideo = () => {
     mediaGeneration += 1;
     if (!video) return;
+    const toggleWasFocused = toggle === document.activeElement;
     video.pause();
     const sources = video.querySelectorAll("source");
     if (sources.length === 0) {
-      toggle?.setAttribute("hidden", "");
+      root.classList.remove("has-video");
+      toggle?.setAttribute("aria-hidden", "true");
+      if (toggle) toggle.tabIndex = -1;
+      if (toggleWasFocused)
+        document.getElementById("mentions-trigger")?.focus();
       return;
     }
     sources.forEach(source => source.remove());
     video.load();
-    toggle?.setAttribute("hidden", "");
+    root.classList.remove("has-video");
+    toggle?.setAttribute("aria-hidden", "true");
+    if (toggle) toggle.tabIndex = -1;
+    if (toggleWasFocused) document.getElementById("mentions-trigger")?.focus();
   };
 
   const setFinalState = (moveFocus = false) => {
@@ -93,7 +101,9 @@ const initialise = () => {
           !source.isConnected
         )
           return;
-        toggle?.removeAttribute("hidden");
+        root.classList.add("has-video");
+        toggle?.removeAttribute("aria-hidden");
+        if (toggle) toggle.tabIndex = 0;
         setPlaybackControl();
       })
       .catch(() => {

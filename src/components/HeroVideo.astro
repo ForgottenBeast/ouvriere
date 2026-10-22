@@ -58,7 +58,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   <div class="controls">
     <button type="button" data-intro-skip aria-hidden="true" tabindex="-1"
       >Passer l'introduction</button
-    ><button type="button" data-video-toggle hidden
+    ><button type="button" data-video-toggle aria-hidden="true" tabindex="-1"
       >Lecture / pause de la vidéo</button
     ><a id="mentions-trigger" href="#mentions">Mentions</a>
   </div>
@@ -185,6 +185,9 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     bottom: 1rem;
     display: flex;
     gap: 0.8rem;
+    max-width: calc(100% - 2rem);
+    flex-wrap: wrap;
+    justify-content: end;
     font-family: system-ui, sans-serif;
     font-size: 0.75rem;
   }
@@ -276,6 +279,15 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   [data-intro-skip] {
     visibility: hidden;
     pointer-events: none;
+  }
+  [data-video-toggle] {
+    min-inline-size: 11rem;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  [data-demo-root].has-video [data-video-toggle] {
+    visibility: visible;
+    pointer-events: auto;
   }
   [data-demo-root].is-enhanced [data-intro-skip] {
     visibility: visible;
