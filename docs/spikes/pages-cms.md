@@ -275,9 +275,42 @@ handling design.
 - `ouv-jjp.5` — implement and verify the no-copy CMS custom field / Worker handoff.
 - `ouv-jjp.6` — choose the self-hosted Pages CMS and Worker deployment shape, then verify their
   combined end-to-end integration. `ouv-jjp.4` depends on this decision.
+- `ouv-jjp.8` — validate the Cloudflare Container Pages CMS hosting shape, Postgres connectivity
+  and release-time migrations against the smoke checks above.
 - `ouv-jjp.7` — assess and, if selected, implement the same-origin CMS session broker and its
   machine-authenticated Worker contract.
 
 Hosting decision still required: choose the self-hosted Pages CMS build needed for the custom
 field and its separate media app deployment. The hosted Pages CMS path remains the fallback
 for labels and manual UID entry until that decision is made.
+
+## Hosting assessment
+
+Follow-up `ouv-jjp.8` records the current lowest-porting-risk Cloudflare option: build the
+Pages CMS `2.1.8` / Next 16 application as a Nix-built OCI image and run it with full Node.js
+`next start` in Cloudflare Containers. Run the protected media Worker and Stream separately.
+Cloudflare Containers are generally available on paid Workers plans; see the
+[Cloudflare Containers documentation](https://developers.cloudflare.com/containers/). This is
+an assessment only: a Pages CMS workload has not been tested in a Container.
+
+Pages CMS requires Postgres for authentication, collaboration and cache; content remains in
+GitHub. See the [Pages CMS database documentation](https://pagescms.org/docs/development/database/).
+An external Postgres instance could be managed on a NixOS host, but connectivity, TLS,
+backup, authorization and operational security require a separate validation. Cloudflare
+[Hyperdrive](https://developers.cloudflare.com/hyperdrive/) provides connection pooling and
+does not host a database. D1 is SQLite and is not a drop-in replacement for the required
+Postgres workload.
+
+| Host layout | Intended role | Required smoke checks | Current evidence |
+| --- | --- | --- | --- |
+| Cloudflare Container | Self-hosted Pages CMS, full Node `next start` | CMS login, save, custom field, Postgres connection, email and webhook delivery, cold start | Not tested |
+| Cloudflare Worker + Stream | Protected media upload/status/MP4 preparation | Access/Zitadel auth, OPA decision, direct upload, readiness and MP4 URL | Design only |
+| GitHub Pages | Public landing page during prototype and initial deployment | `/ouvriere/` paths, noindex and media fallback | Existing deployment target; unchanged |
+
+A pure Worker CMS portal is a separate compatibility spike. Cloudflare's
+[Next.js Workers guide](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/)
+currently recommends Vinext (beta), with OpenNext as an alternative; neither has proven
+compatibility with this Pages CMS workload. The current post-build migration step must move to
+an explicit release or startup operation rather than running inside the hermetic Nix build.
+No backend deployment or external database service is prescribed by this spike, and no new
+dependency, secret or configuration change is implied.
