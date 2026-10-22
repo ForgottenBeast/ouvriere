@@ -187,6 +187,34 @@ cannot be added through the site's `.pages.yml` alone. Native Pages CMS GitHub/e
 authentication remains distinct from the Access/Zitadel media gate. The custom field and
 Worker integration are not implemented or proven by this spike.
 
+## Session reuse assessment
+
+The preferred no-copy design can reuse the chef's CMS session only when Pages CMS is
+self-hosted. The current Pages CMS auth implementation uses Better Auth with a Drizzle
+Postgres session table, `nextCookies` and email OTP; it uses opaque session cookies and does
+not expose a JWT or bearer-token plugin by default. See the current
+[Pages CMS auth implementation](https://github.com/hunvreus/pagescms/blob/main/lib/auth.ts).
+Better Auth's [JWT plugin](https://better-auth.com/docs/plugins/jwt) is an opt-in external
+token/JWKS feature and is separate from the default session cookie.
+
+The recommended same-origin broker is a self-hosted CMS media endpoint. It validates
+`auth.api.getSession`, repository access and CSRF, then calls the protected Worker with explicit
+machine authentication. The Worker applies OPA policy per action using the trusted CMS actor
+and repository as inputs, and returns a one-time Stream upload URL to the browser. File bytes
+continue directly from the browser to Stream. This reuses the chef's CMS login without adding
+a user JWT or sharing CMS secrets with the browser.
+
+The existing Access/Zitadel gate is not bypassed and does not automatically accept a CMS
+session cookie. The CMS server must make an explicit machine-to-machine call to the Worker.
+An optional browser-direct route would need a narrow, asymmetric upload capability with an
+audience, subject, repository, action, expiry and replay protection. Backend authorization
+must happen first, and any Access route policy change must be deliberate; a Better Auth secret
+must never be shared with the Worker or browser.
+
+Hosted Pages CMS cannot reuse this session because the project does not control its issuer,
+database or signing keys. This is an assessment and broker alternative, not an implemented or
+approved architecture change.
+
 ## Editor and publication workflow
 
 ```text
@@ -247,6 +275,8 @@ handling design.
 - `ouv-jjp.5` — implement and verify the no-copy CMS custom field / Worker handoff.
 - `ouv-jjp.6` — choose the self-hosted Pages CMS and Worker deployment shape, then verify their
   combined end-to-end integration. `ouv-jjp.4` depends on this decision.
+- `ouv-jjp.7` — assess and, if selected, implement the same-origin CMS session broker and its
+  machine-authenticated Worker contract.
 
 Hosting decision still required: choose the self-hosted Pages CMS build needed for the custom
 field and its separate media app deployment. The hosted Pages CMS path remains the fallback
