@@ -4,8 +4,8 @@ export const DEMO_TIMELINE = {
   sharedFadeOut: [5000, 6400],
   menuItemIn: [
     [6400, 7200],
-    [6900, 7700],
-    [7400, 8200],
+    [7025, 7825],
+    [7650, 8450],
   ],
 } as const;
 

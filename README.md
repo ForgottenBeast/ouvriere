@@ -53,7 +53,7 @@ sharp. The quote and attribution start 1000 ms after the title. The title, quote
 attribution share one fade-out. Three left-aligned bullet entries appear individually after
 that transition and remain ordinary, noninteractive text. The current timings are title
 fade-in 0–2000 ms, quote fade-in 1000–3000 ms, shared fade-out 5000–6400 ms, and menu fades
-onset at 6400/6900/7400 ms with 800 ms duration. Tune only from Chrome DevTools evidence.
+onset at 6400/7025/7650 ms with 800 ms duration, completing at 8450 ms. Tune only from Chrome DevTools evidence.
 
 Stock footage provenance and the prepared upload candidate are recorded in
 [`docs/media-license.md`](docs/media-license.md). The current source is a Pexels clip by
