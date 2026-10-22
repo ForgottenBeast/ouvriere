@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.4.2] - 2026-10-22
+
+### Fixed
+
+- Shortened the centre handoff by 15% and renamed the second menu entry La cuisine.
+
 ## [4.4.1] - 2026-10-22
 
 ### Fixed
