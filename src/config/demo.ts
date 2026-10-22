@@ -5,9 +5,9 @@ export const DEMO_TIMELINE = {
   listIn: [3200, 4100],
 } as const;
 
-// Populate only when the publication team supplies an approved Stream MP4 URL.
-// No Stream identifier is inferred or committed by this prototype.
-export const streamMp4Url = "";
+// Public Cloudflare Stream MP4 used by the landing-page background player.
+export const streamMp4Url =
+  "https://customer-spsh21dx72idjxm3.cloudflarestream.com/dfdd8aa3018f15b13f2a75ec8ad1deae/downloads/default.mp4";
 
 export const canAttachVideo = (url: string, mediaAllowed: boolean) =>
   Boolean(url) && mediaAllowed;

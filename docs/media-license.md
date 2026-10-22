@@ -1,9 +1,9 @@
 # Prototype media provenance
 
-## Calm sea waves placeholder
+## Calm sea waves prototype asset
 
-This stock video is a temporary prototype asset. Remove it when the restaurant's
-chef footage is available.
+This stock video is the current prototype asset. Replace it when the restaurant's chef
+footage is available.
 
 - Title: *Calm Ocean Waves and Cloudy Sky Horizon Scenery*
 - Creator: Marianna Sigov
@@ -37,7 +37,14 @@ The poster at `src/assets/media/calm-sea-waves-poster.jpg` was extracted at
 9 seconds from the original source, scaled to 1280 x 720 with Lanczos scaling,
 and encoded as JPEG. Its measured size is 89,825 bytes.
 
-No Cloudflare Stream credential variable, repository configuration, Wrangler
-configuration, or matching runtime-secret filename was found during the
-metadata-only capability check on 2026-10-21. Upload requires separately
-established Cloudflare Stream access.
+## Cloudflare Stream delivery
+
+The prepared upload is available through Cloudflare Stream with video ID
+`dfdd8aa3018f15b13f2a75ec8ad1deae`. The configured downloadable MP4 URL is:
+
+<https://customer-spsh21dx72idjxm3.cloudflarestream.com/dfdd8aa3018f15b13f2a75ec8ad1deae/downloads/default.mp4>
+
+On 2026-10-22, the URL returned HTTP 200 with `Content-Type: video/mp4` and a served
+`Content-Length` of 5,690,651 bytes. This served size is distinct from the 4,241,980-byte
+(about 4.05 MiB) prepared upload candidate described above. The delivery asset duration is
+12.01 seconds. No claim of public deployment is made by this record.

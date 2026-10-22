@@ -43,10 +43,10 @@ succeed without it because upstream dependency resolution makes the transformer 
 
 ## Media and visual contract
 
-The source video stays outside Git. Upload the approved clip to Cloudflare Stream, then add
-its playback reference to the static page configuration used by the implementation. Keep the
-local poster available for no-JavaScript, reduced-motion, Save-Data, failed-autoplay and
-missing-video states.
+The source video stays outside Git. The current approved clip is delivered by Cloudflare
+Stream; its complete returned MP4 playback URL and measured response are recorded in
+[`docs/media-license.md`](docs/media-license.md). Keep the local poster available for
+no-JavaScript, reduced-motion, Save-Data, failed-autoplay and missing-video states.
 
 When the title starts appearing, the background receives a subtle blur while the text stays
 sharp. The quote and attribution start 500 ms after the title. The title, quote and

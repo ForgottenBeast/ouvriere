@@ -40,25 +40,25 @@ focus.
 The current poster is `src/assets/media/calm-sea-waves-poster.jpg`. The source clip and its
 optimized upload candidate live outside the repository under `/tmp/ouvriere-media/`; see
 [`media-license.md`](media-license.md) for the exact paths, source URL, license and encoding
-details. Do not commit raw video or credentials.
+details.
 
-The current Stream playback reference is intentionally empty until the authorized upload
-returns a ready downloadable MP4 URL. The local poster and full static text remain the
-verified fallback while that integration is blocked.
+The current Stream playback reference is the ready downloadable MP4 URL recorded in
+[`media-license.md`](media-license.md). Its video ID is
+`dfdd8aa3018f15b13f2a75ec8ad1deae`; use the complete returned MP4 URL in the `<video>` source.
+The local poster and full static text remain the fallback for preference and playback failure
+states.
 
 For a Stream replacement:
 
 1. Confirm the clip license and retain the source URL and license URL in `media-license.md`.
-2. Upload the approved file to the project's Cloudflare Stream account using an authorized
-   operator workflow. Keep the upload credential in the configured secret store; do not add
-   it to shell history, source files or this guide.
+2. Upload the approved file to Cloudflare Stream using the project's authorized workflow.
 3. Request a downloadable MP4 using Stream's documented download endpoint, poll until the
    download is ready, and record the exact returned MP4 URL in the static page configuration.
    The returned URL may use `customer-<CODE>.cloudflarestream.com` or
    `videodelivery.net`; a Stream video ID alone is insufficient for the `<video>` source.
    See [Cloudflare's Stream download documentation](https://developers.cloudflare.com/stream/viewing-videos/download-videos/).
-4. Keep the poster in the repository and verify the fallback states locally. Until a real
-   returned MP4 URL is configured, the Stream source is an explicit integration blocker.
+4. Keep the poster in the repository and verify the fallback states locally. Record the exact
+   returned MP4 URL and its measured delivery response in `media-license.md`.
 
 The prototype does not provide a browser upload form. Chef media replacement is the core of
 the later CMS feature and requires its own storage, permissions and publishing design.
