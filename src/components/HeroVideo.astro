@@ -13,8 +13,9 @@ const webmasterLine =
 const [titleInStart, titleInEnd] = DEMO_TIMELINE.titleIn;
 const [quoteInStart, quoteInEnd] = DEMO_TIMELINE.quoteIn;
 const [fadeOutStart, fadeOutEnd] = DEMO_TIMELINE.sharedFadeOut;
-const [listInStart, listInEnd] = DEMO_TIMELINE.listIn;
-const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${titleInEnd - titleInStart}ms;--quote-in-start:${quoteInStart}ms;--quote-in-duration:${quoteInEnd - quoteInStart}ms;--fade-out-start:${fadeOutStart}ms;--fade-out-duration:${fadeOutEnd - fadeOutStart}ms;--list-in-start:${listInStart}ms;--list-in-duration:${listInEnd - listInStart}ms;`;
+const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${titleInEnd - titleInStart}ms;--quote-in-start:${quoteInStart}ms;--quote-in-duration:${quoteInEnd - quoteInStart}ms;--fade-out-start:${fadeOutStart}ms;--fade-out-duration:${fadeOutEnd - fadeOutStart}ms;`;
+const menuItemStyle = ([start, end]: readonly [number, number]) =>
+  `--menu-item-start:${start}ms;--menu-item-duration:${end - start}ms;`;
 ---
 
 <main class="landing" data-demo-root style={timelineStyle}>
@@ -53,7 +54,13 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     tabindex="-1"
     aria-label="Navigation de présentation"
   >
-    <ul><li>L'univers</li><li>La maison</li><li>Offre du moment</li></ul>
+    <ul>
+      <li style={menuItemStyle(DEMO_TIMELINE.menuItemIn[0])}>L'univers</li>
+      <li style={menuItemStyle(DEMO_TIMELINE.menuItemIn[1])}>La maison</li>
+      <li style={menuItemStyle(DEMO_TIMELINE.menuItemIn[2])}>
+        Offre du moment
+      </li>
+    </ul>
   </section>
   <div class="controls">
     <button type="button" data-intro-skip aria-hidden="true" tabindex="-1"
@@ -261,14 +268,15 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     animation: quote-in var(--quote-in-duration) var(--quote-in-start) ease both;
     opacity: 0;
   }
-  [data-demo-root].is-enhanced .menu {
+  [data-demo-root].is-enhanced .menu li {
     opacity: 0;
-    animation: menu-in var(--list-in-duration) var(--list-in-start) ease both;
+    animation: menu-item-in var(--menu-item-duration) var(--menu-item-start)
+      ease both;
   }
   [data-demo-root].is-complete .intro {
     display: none;
   }
-  [data-demo-root].is-complete .menu {
+  [data-demo-root].is-complete .menu li {
     opacity: 1;
     animation: none;
   }
@@ -319,7 +327,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       visibility: hidden;
     }
   }
-  @keyframes menu-in {
+  @keyframes menu-item-in {
     to {
       opacity: 1;
     }

@@ -1,8 +1,12 @@
 export const DEMO_TIMELINE = {
-  titleIn: [0, 1000],
-  quoteIn: [500, 1500],
-  sharedFadeOut: [2500, 3200],
-  listIn: [3200, 4100],
+  titleIn: [0, 2000],
+  quoteIn: [1000, 3000],
+  sharedFadeOut: [5000, 6400],
+  menuItemIn: [
+    [6400, 7200],
+    [6900, 7700],
+    [7400, 8200],
+  ],
 } as const;
 
 // Public Cloudflare Stream MP4 used by the landing-page background player.

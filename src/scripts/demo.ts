@@ -19,6 +19,8 @@ const initialise = () => {
   ).connection;
   let mediaGeneration = 0;
   let finishTimer: number | undefined;
+  const introCompletion =
+    DEMO_TIMELINE.menuItemIn[DEMO_TIMELINE.menuItemIn.length - 1][1];
 
   const setPlaybackControl = () => {
     if (!video || !toggle) return;
@@ -73,10 +75,7 @@ const initialise = () => {
     root.classList.add("is-enhanced");
     skip?.removeAttribute("aria-hidden");
     if (skip) skip.tabIndex = 0;
-    finishTimer = window.setTimeout(
-      () => setFinalState(),
-      DEMO_TIMELINE.listIn[1]
-    );
+    finishTimer = window.setTimeout(() => setFinalState(), introCompletion);
   };
 
   const attachVideo = () => {
