@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.4.0] - 2026-10-22
+
+### Added
+
+- A crossfaded Cloudflare Stream background video and staged landing-menu reveal.
+
+### Changed
+
+- Landing intro timing based on browser validation.
+
 ## [4.3.1] - 2026-10-22
 
 ### Fixed
