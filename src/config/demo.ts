@@ -1,11 +1,11 @@
 export const DEMO_TIMELINE = {
   titleIn: [0, 2000],
   quoteIn: [1000, 3000],
-  sharedFadeOut: [5000, 6400],
+  sharedFadeOut: [5000, 6190],
   menuItemIn: [
-    [6400, 7200],
-    [7025, 7825],
-    [7650, 8450],
+    [6190, 6990],
+    [6815, 7615],
+    [7440, 8240],
   ],
 } as const;
 

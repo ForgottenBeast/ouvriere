@@ -8,13 +8,22 @@ test("the intro uses the approved finite timing contract", () => {
   assert.deepEqual(DEMO_TIMELINE, {
     titleIn: [0, 2000],
     quoteIn: [1000, 3000],
-    sharedFadeOut: [5000, 6400],
+    sharedFadeOut: [5000, 6190],
     menuItemIn: [
-      [6400, 7200],
-      [7025, 7825],
-      [7650, 8450],
+      [6190, 6990],
+      [6815, 7615],
+      [7440, 8240],
     ],
   });
+});
+
+test("the display-only menu uses the approved cuisine label", async () => {
+  const component = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+  assert.match(component, />La cuisine<\/li>/);
+  assert.doesNotMatch(component, />La maison<\/li>/);
 });
 
 test("video sources require both a URL and permission to use media", () => {

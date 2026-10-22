@@ -20,8 +20,8 @@ in individually; the list is display-only and must not acquire links or click be
 part of this demo.
 
 The current timeline is title fade-in 0–2000 ms, quote and attribution fade-in 1000–3000 ms,
-shared intro fade-out 5000–6400 ms, then three 800 ms menu fades with onsets at 6400 ms,
-7025 ms and 7650 ms, completing at 8450 ms. The 1000 ms quote onset and shared fade-out are
+shared intro fade-out 5000–6190 ms, then three 800 ms menu fades with onsets at 6190 ms,
+6815 ms and 7440 ms, completing at 8240 ms. The 1000 ms quote onset and shared fade-out are
 fixed for this revision; other durations may be tuned from visual evidence.
 
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
