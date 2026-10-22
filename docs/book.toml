@@ -1,0 +1,8 @@
+[book]
+title = "L'Ouvriere landing page"
+authors = ["L'Ouvriere"]
+language = "en"
+src = "src"
+
+[output.html]
+site-url = "/ouvriere/"

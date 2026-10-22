@@ -3,4 +3,6 @@
 node_modules
 public
 dist
+result
+result-doc
 .yarn

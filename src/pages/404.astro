@@ -1,42 +1,72 @@
----
-import { SITE } from "@config";
-import Layout from "@layouts/Layout.astro";
-import Header from "@components/Header.astro";
-import Footer from "@components/Footer.astro";
-import LinkButton from "@components/LinkButton.astro";
----
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <title>Page introuvable | Ouvrière</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Georgia, "Times New Roman", serif;
+        background: #17140f;
+        color: #f3ead8;
+      }
 
-<Layout title={`404 Not Found | ${SITE.title}`}>
-  <Header />
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        place-items: center;
+      }
 
-  <main id="main-content">
-    <div class="not-found-wrapper">
-      <h1 aria-label="404 Not Found">404</h1>
-      <span aria-hidden="true">¯\_(ツ)_/¯</span>
-      <p>Page Not Found</p>
-      <LinkButton
-        href="/"
-        className="my-6 text-lg underline decoration-dashed underline-offset-8"
-      >
-        Go back home
-      </LinkButton>
-    </div>
-  </main>
+      main {
+        max-width: 34rem;
+        padding: 3rem 1.5rem;
+        text-align: center;
+      }
 
-  <Footer />
-</Layout>
+      p:first-of-type {
+        margin: 0;
+        color: #caa56a;
+        font:
+          700 clamp(5rem, 24vw, 10rem) / 0.9 system-ui,
+          sans-serif;
+      }
 
-<style>
-  #main-content {
-    @apply mx-auto flex max-w-3xl flex-1 items-center justify-center;
-  }
-  .not-found-wrapper {
-    @apply mb-14 flex flex-col items-center justify-center;
-  }
-  .not-found-wrapper h1 {
-    @apply text-9xl font-bold text-skin-accent;
-  }
-  .not-found-wrapper p {
-    @apply mt-4 text-2xl sm:text-3xl;
-  }
-</style>
+      h1 {
+        margin: 1.5rem 0 0.75rem;
+        font-size: clamp(1.75rem, 6vw, 2.75rem);
+      }
+
+      p {
+        line-height: 1.6;
+      }
+
+      a {
+        display: inline-block;
+        margin-top: 1.25rem;
+        border: 1px solid #caa56a;
+        border-radius: 999px;
+        padding: 0.75rem 1.25rem;
+        color: inherit;
+        font-family: system-ui, sans-serif;
+        text-decoration: none;
+      }
+
+      a:focus-visible,
+      a:hover {
+        background: #caa56a;
+        color: #17140f;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p aria-hidden="true">404</p>
+      <h1>Page introuvable</h1>
+      <p>Cette page n’existe pas ou a été déplacée.</p>
+      <a href={import.meta.env.BASE_URL}>Retour à l’accueil</a>
+    </main>
+  </body>
+</html>
