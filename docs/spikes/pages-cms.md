@@ -107,7 +107,7 @@ MP4 download activation and readiness are separate from accepting the upload.
 The two viable follow-up designs are:
 
 1. An external, authenticated uploader returns a ready Stream UID, after which the chef edits
-   the UID in Pages CMS.
+   the UID in Pages CMS. This copy/paste workflow is now a fallback only.
 2. A self-hosted custom field and backend own the direct upload, readiness check and content
    write. If this backend is chosen, its design must fit the repository's Nix, OIDC, OPA and
    OpenBao secret-source policies; this spike does not implement it.
@@ -137,7 +137,7 @@ Chef -> Worker: GET /v1/videos/{uid}
                          v
                  ready Stream UID + MP4 preparation status
                          |
-Chef pastes ready UID into Pages CMS
+             CMS custom field receives UID
 ```
 
 The conceptual endpoint contract should cover `POST /v1/uploads`, `GET /v1/videos/{uid}`,
@@ -155,10 +155,12 @@ provide TUS. Larger or resumable uploads need the Stream REST/TUS path provision
 scoped server token, with the token delivered to the Worker only through the approved OpenBao
 secret injection path. Stream readiness and MP4 readiness are independent checks.
 
-The first workflow is therefore: upload in the protected media app, wait for readiness, then
-paste the UID into Pages CMS. Automatically writing CMS Git content requires a separate
-GitHub App permissions decision. These endpoint names are a stable design concept, not an
-implemented service.
+The preferred workflow is therefore: upload in the protected media app, wait for readiness,
+and have the CMS field receive the UID in the same editor session. Normal CMS save then commits
+the labels and UID together, without a second GitHub writer credential or stale form overwrite.
+Copying a ready UID into the field remains a fallback. Automatically writing CMS Git content
+from the Worker requires a separate GitHub App permissions decision. These endpoint names are
+a stable design concept, not an implemented service.
 
 Pages CMS authentication remains separate. It may use its documented email collaborator or
 GitHub login flow; hosted Pages CMS does not document Zitadel OIDC integration, so this design
@@ -166,6 +168,24 @@ makes no single-SSO promise across the two applications. The Access/Zitadel conn
 documented confidential-code flow with PKCE disabled; this is connector-specific, not a general
 recommendation. A direct Zitadel app would require its own PKCE decision. Worker implementation,
 API binding, policy and secret configuration are follow-up work and are outside this spike.
+
+## No-copy CMS field workflow
+
+Pages CMS custom fields support an `EditComponent(value, onChange)` implementation that is
+registered under the CMS app's `fields/custom/<type>` directory. The preferred UI is a native
+custom React field that calls the protected Worker and invokes `onChange(readyUid)` after MP4
+readiness. An iframe uploader is a second option: it posts the ready UID with `postMessage`,
+and the parent custom field calls `onChange`. The parent must validate exact origin, source
+window and nonce; the child must use the exact target origin. The iframe must also satisfy
+`frame-ancestors` restrictions. See [MDN `postMessage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage).
+Authentication belongs at the top-level Access/popup boundary, not as a separate Zitadel login
+rendered inside the iframe. If Access uses its authorization cookie, follow
+[Cloudflare's authorization cookie guidance](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/).
+
+This requires a self-hosted Pages CMS build and custom app code; an arbitrary iframe plugin
+cannot be added through the site's `.pages.yml` alone. Native Pages CMS GitHub/email
+authentication remains distinct from the Access/Zitadel media gate. The custom field and
+Worker integration are not implemented or proven by this spike.
 
 ## Editor and publication workflow
 
@@ -224,3 +244,10 @@ handling design.
 - `ouv-jjp.2` — prove hosted CMS save and publish behavior with the landing file entry.
 - `ouv-jjp.3` — design and implement the protected Zitadel/Cloudflare Worker media service.
 - `ouv-jjp.4` — verify the end-to-end upload, readiness, UID handoff and publication workflow.
+- `ouv-jjp.5` — implement and verify the no-copy CMS custom field / Worker handoff.
+- `ouv-jjp.6` — choose the self-hosted Pages CMS and Worker deployment shape, then verify their
+  combined end-to-end integration. `ouv-jjp.4` depends on this decision.
+
+Hosting decision still required: choose the self-hosted Pages CMS build needed for the custom
+field and its separate media app deployment. The hosted Pages CMS path remains the fallback
+for labels and manual UID entry until that decision is made.
