@@ -49,10 +49,11 @@ Stream; its complete returned MP4 playback URL and measured response are recorde
 no-JavaScript, reduced-motion, Save-Data, failed-autoplay and missing-video states.
 
 When the title starts appearing, the background receives a subtle blur while the text stays
-sharp. The quote and attribution start 500 ms after the title. The title, quote and
-attribution share one fade-out. The left-aligned bullet list appears after that transition
-and remains ordinary, noninteractive text. The exact 500 ms offset and shared fade-out are
-fixed; other durations may be tuned from Chrome DevTools screenshots.
+sharp. The quote and attribution start 1000 ms after the title. The title, quote and
+attribution share one fade-out. Three left-aligned bullet entries appear individually after
+that transition and remain ordinary, noninteractive text. The current timings are title
+fade-in 0–2000 ms, quote fade-in 1000–3000 ms, shared fade-out 5000–6400 ms, and menu fades
+onset at 6400/6900/7400 ms with 800 ms duration. Tune only from Chrome DevTools evidence.
 
 Stock footage provenance and the prepared upload candidate are recorded in
 [`docs/media-license.md`](docs/media-license.md). The current source is a Pexels clip by

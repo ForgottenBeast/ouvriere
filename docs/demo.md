@@ -14,14 +14,15 @@ release process.
 ## Sequence to preserve
 
 The page begins with the white `L'Ouvriere` title centered over the sea. The italic quote
-`La pleine mer en pleine terre` and `G.Pudlowski` begin 500 ms after the title starts. All
-three intro elements fade out together. A white, left-justified bullet list then fades in;
-the list is display-only and must not acquire links or click behavior as part of this demo.
+`La pleine mer en pleine terre` and `G.Pudlowski` begin 1000 ms after the title starts. All
+three intro elements fade out together. Three white, left-justified bullet entries then fade
+in individually; the list is display-only and must not acquire links or click behavior as
+part of this demo.
 
-The provisional timeline is title fade-in 0–1000 ms, quote fade-in 500–1500 ms, title hold
-through 2500 ms, shared intro fade-out 2500–3200 ms, and list fade-in 3200–4100 ms. The
-500 ms quote onset and shared fade-out are fixed; other durations may be tuned from visual
-evidence.
+The current timeline is title fade-in 0–2000 ms, quote and attribution fade-in 1000–3000 ms,
+shared intro fade-out 5000–6400 ms, then three 800 ms menu fades with onsets at 6400 ms,
+6900 ms and 7400 ms, completing at 8200 ms. The 1000 ms quote onset and shared fade-out are
+fixed for this revision; other durations may be tuned from visual evidence.
 
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
@@ -41,11 +42,11 @@ optimized upload candidate live outside the repository under `/tmp/ouvriere-medi
 [`media-license.md`](media-license.md) for the exact paths, source URL, license and encoding
 details.
 
-The current Stream playback reference is the ready downloadable MP4 URL recorded in
-[`media-license.md`](media-license.md). Its video ID is
-`dfdd8aa3018f15b13f2a75ec8ad1deae`; use the complete returned MP4 URL in the `<video>` source.
-The local poster and full static text remain the fallback for preference and playback failure
-states.
+The final approximately 11-second crossfaded Stream asset is recorded in
+[`media-license.md`](media-license.md), including its video ID, complete returned MP4 URL
+and served size. The local poster and full static text remain the fallback for preference and
+playback failure states. The crossfade is a softened blend and does not guarantee a perfectly
+seamless loop.
 
 For a Stream replacement:
 
