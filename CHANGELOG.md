@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.3.1] - 2026-10-22
+
+### Fixed
+
+- Added the project favicon to the French 404 page.
+
 ## [4.3.0] - 2026-10-22
 
 ### Added
