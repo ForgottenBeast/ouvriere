@@ -65,3 +65,14 @@ test("404 is French, excluded from indexing, and links to the project base", () 
   assert.match(page, /href=\{import\.meta\.env\.BASE_URL\}/);
   assert.match(page, /Retour à l’accueil/);
 });
+
+test("404 declares the project SVG favicon under the configured base", () => {
+  const page = readFileSync("src/pages/404.astro", "utf8");
+
+  assert.match(page, /import\.meta\.env\.BASE_URL/);
+  assert.match(page, /`\$\{baseURL\}favicon\.svg`/);
+  assert.match(
+    page,
+    /<link\s+rel=["']icon["']\s+type=["']image\/svg\+xml["']\s+href=\{faviconURL\}\s*\/?>/
+  );
+});
