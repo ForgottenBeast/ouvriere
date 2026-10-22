@@ -1,6 +1,19 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file. The entries before 4.3.0 are retained from AstroPaper's upstream history.
+
+## [Unreleased]
+
+## [4.3.0] - 2026-10-22
+
+### Added
+
+- L'Ouvriere sea-video landing page, static legal notice, and Cloudflare Stream demo media.
+- A main-only GitHub Pages workflow and mdBook maintenance guide.
+
+### Fixed
+
+- Reserved playback-control space and preserved focus when media availability changes.
 
 ## [4.2.0](https://github.com/satnaing/astro-paper/compare/v4.1.0...v4.2.0) (2024-01-22)
 

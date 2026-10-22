@@ -5,12 +5,11 @@ explicit until the CMS feature is designed.
 
 ## Public compatibility surface
 
-The unreleased prototype public surface is the `/ouvriere/` HTML page and its static media
-references; generated hashed asset filenames are implementation details and are not a stable
-API. The existing manifest version remains in force until a separate approved release commit
-assigns the prototype version. There is no public JavaScript module API, CMS API, upload
-endpoint or stable content schema. Changes to the page contract should be documented here and
-versioned with the release process.
+As of version 4.3.0, the public compatibility surface is the `/ouvriere/` HTML page and its
+static media references; generated hashed asset filenames are implementation details and are
+not a stable API. There is no public JavaScript module API, CMS API, upload endpoint or stable
+content schema. Changes to the page contract should be documented here and versioned with the
+release process.
 
 ## Sequence to preserve
 
