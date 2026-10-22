@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.4.1] - 2026-10-22
+
+### Fixed
+
+- Set 625 ms menu-entry offsets and retained inert menu items with pointer cursors.
+
 ## [4.4.0] - 2026-10-22
 
 ### Added
