@@ -23,7 +23,13 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
 ---
 
 <main
-  class:list={["landing", { "nature-version": variant !== "v1" }]}
+  class:list={[
+    "landing",
+    {
+      "nature-version": variant !== "v1",
+      "no-blur": variantConfig.backgroundBlurPx === 0,
+    },
+  ]}
   data-demo-root
   data-demo-variant={variant}
   data-video-src={variantConfig.streamMp4Url}
@@ -152,6 +158,10 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
     object-fit: cover;
     filter: blur(3px);
     transform: scale(1.025);
+  }
+  .landing.no-blur .poster,
+  .landing.no-blur .video {
+    filter: none;
   }
   .nature-version {
     font-family: "Cormorant Garamond", Georgia, serif;
@@ -284,6 +294,11 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
     filter: blur(0);
     animation: media-blur var(--title-in-duration) var(--title-in-start) ease
       both;
+  }
+  .landing.no-blur.is-enhanced .poster,
+  .landing.no-blur.is-enhanced .video {
+    filter: none;
+    animation: none;
   }
   [data-demo-root].is-enhanced h1 {
     animation: title-in var(--title-in-duration) var(--title-in-start) ease both;

@@ -38,6 +38,12 @@ test("each variant selects one explicit Stream MP4 source", () => {
     LANDING_VARIANTS.v3.streamMp4Url,
     "https://customer-spsh21dx72idjxm3.cloudflarestream.com/bdcacf524d311c58a8a92f9f70ae34d4/downloads/default.mp4"
   );
+  assert.equal(LANDING_VARIANTS.v4.poster, "green");
+  assert.equal(LANDING_VARIANTS.v4.backgroundBlurPx, 0);
+  assert.equal(
+    LANDING_VARIANTS.v4.streamMp4Url,
+    LANDING_VARIANTS.v3.streamMp4Url
+  );
 });
 
 test("HeroVideo receives the selected poster instead of importing the ocean poster", async () => {
@@ -49,4 +55,16 @@ test("HeroVideo receives the selected poster instead of importing the ocean post
   assert.doesNotMatch(hero, /calm-sea-waves-poster/);
   assert.match(hero, /posterImage: ImageMetadata/);
   assert.match(hero, /src=\{posterImage\}/);
+});
+
+test("v4 disables both background blur mechanisms without changing text animation", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(hero, /"no-blur": variantConfig\.backgroundBlurPx === 0/);
+  assert.match(hero, /\.landing\.no-blur\.is-enhanced \.poster,/);
+  assert.match(hero, /animation: none;/);
+  assert.match(hero, /\[data-demo-root\]\.is-enhanced h1/);
 });
