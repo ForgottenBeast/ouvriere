@@ -31,6 +31,16 @@ test("publishes only the landing page and custom 404 routes", () => {
   }
 });
 
+test("provides explicit comparison and chooser routes", () => {
+  for (const route of [
+    "src/pages/v1/index.astro",
+    "src/pages/v2/index.astro",
+    "src/pages/versions/index.astro",
+  ]) {
+    assert.equal(existsSync(route), true, `${route} must be published`);
+  }
+});
+
 test("does not run the unused Astro Studio workflow", () => {
   assert.equal(existsSync(".github/workflows/_studio.yml"), false);
 });

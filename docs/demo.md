@@ -24,6 +24,16 @@ shared intro fade-out 5000–6190 ms, then three 800 ms menu fades with onsets a
 6815 ms and 7440 ms, completing at 8240 ms. The 1000 ms quote onset and shared fade-out are
 fixed for this revision; other durations may be tuned from visual evidence.
 
+## Comparison routes
+
+`/v1/` preserves the current presentation. `/v2/` is a nature comparison: its title entrance
+lasts 2500 ms while quote, fade-out, and menu timings stay unchanged. It alternates the existing
+sea source with a green-water source through a baked 1500 ms crossfade in one Stream MP4.
+Reduced motion, Save-Data, playback failure, and JavaScript-disabled states retain the poster
+fallback.
+
+`/versions/` is the base-aware chooser for these non-indexed comparison routes.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot

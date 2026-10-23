@@ -54,3 +54,20 @@ On 2026-10-22, the URL returned HTTP 200 with `Content-Type: video/mp4` and a se
 5,430,971 bytes. The delivered duration is 11.04 seconds. The crossfade is a softened blend,
 not a guarantee of a perfectly seamless loop. No claim of public deployment is made by this
 record.
+
+## Nature comparison assets
+
+The `/v2/` comparison pairs the existing sea clip with *Green Sea* by Kenan
+Turguç (Pexels clip ID `30973714`, <https://www.pexels.com/video/30973714/>).
+The 5-second, 3840 × 2160 H.264 source is kept outside Git at
+`/tmp/ouvriere-media/pexels-kenan-turguc-green-sea-30973714.mp4`.
+It is covered by the Pexels License, which permits website use and modification;
+see <https://www.pexels.com/license/>. Its Stream download URL uses video ID
+`cdff89682d92d157a81d9d5498922610` during preparation. The final v2 delivery is the
+13.17-second offline composition, Stream ID `de890dcbcc7871e1b2114cf1f88f80e1`, served as
+7,183,581-byte MP4. The browser retains the original single-player preference and pause behavior.
+
+The v2 typography self-hosts Cormorant Garamond Latin WOFF2 files under
+`src/assets/fonts/`. They are from Google Fonts' Cormorant Garamond family and
+are licensed under SIL Open Font License 1.1; the included `OFL.txt` is the
+license text. Source: <https://github.com/google/fonts/tree/main/ofl/cormorantgaramond>.

@@ -2,23 +2,32 @@
 import { Image } from "astro:assets";
 import poster from "../assets/media/calm-sea-waves-poster.jpg";
 import { DEMO_TIMELINE } from "../config/demo";
+import { LANDING_VARIANTS, type LandingVariant } from "../config/variants";
 
 interface Props {
   posterURL: string;
+  variant?: LandingVariant;
 }
 
-const { posterURL } = Astro.props;
+const { posterURL, variant = "v1" } = Astro.props;
+const variantConfig = LANDING_VARIANTS[variant];
 const webmasterLine =
   "Zenchef - 63 avenue de Villiers 75017 Paris – webmaster{at}zenchef.com";
-const [titleInStart, titleInEnd] = DEMO_TIMELINE.titleIn;
-const [quoteInStart, quoteInEnd] = DEMO_TIMELINE.quoteIn;
-const [fadeOutStart, fadeOutEnd] = DEMO_TIMELINE.sharedFadeOut;
+const [titleInStart, titleInEnd] = variantConfig.timeline.titleIn;
+const [quoteInStart, quoteInEnd] = variantConfig.timeline.quoteIn;
+const [fadeOutStart, fadeOutEnd] = variantConfig.timeline.sharedFadeOut;
 const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${titleInEnd - titleInStart}ms;--quote-in-start:${quoteInStart}ms;--quote-in-duration:${quoteInEnd - quoteInStart}ms;--fade-out-start:${fadeOutStart}ms;--fade-out-duration:${fadeOutEnd - fadeOutStart}ms;`;
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
   `--menu-item-start:${start}ms;--menu-item-duration:${end - start}ms;`;
 ---
 
-<main class="landing" data-demo-root style={timelineStyle}>
+<main
+  class:list={["landing", { "nature-version": variant === "v2" }]}
+  data-demo-root
+  data-demo-variant={variant}
+  data-video-src={variantConfig.streamMp4Url}
+  style={timelineStyle}
+>
   <div class="media" aria-hidden="true">
     <Image
       class="poster"
@@ -101,6 +110,22 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
 </script>
 
 <style>
+  @font-face {
+    font-family: "Cormorant Garamond";
+    src: url("../assets/fonts/CormorantGaramond-Latin-Normal.woff2")
+      format("woff2");
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Cormorant Garamond";
+    src: url("../assets/fonts/CormorantGaramond-Latin-Italic-400.woff2")
+      format("woff2");
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+  }
   .landing {
     position: relative;
     min-height: 100svh;
@@ -126,6 +151,9 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
     object-fit: cover;
     filter: blur(3px);
     transform: scale(1.025);
+  }
+  .nature-version {
+    font-family: "Cormorant Garamond", Georgia, serif;
   }
   .video {
     position: absolute;
