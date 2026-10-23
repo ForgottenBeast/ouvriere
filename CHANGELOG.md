@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.7.0] - 2026-10-23
+
+### Added
+
+- A shareable no-blur `/v4/` comparison route using the approved green-waves Stream media.
+
+
 ## [4.6.0] - 2026-10-23
 
 ### Added
