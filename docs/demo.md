@@ -34,6 +34,11 @@ fallback.
 
 `/versions/` is the base-aware chooser for these non-indexed comparison routes.
 
+`/v3/` uses the same 2500 ms title timing and Cormorant Garamond typography as v2, with an
+independent green-water poster and a single green-only looping Stream MP4. It must never fall
+back to the ocean poster or video, including with JavaScript disabled, reduced motion, Save-Data,
+or media playback failure.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot
