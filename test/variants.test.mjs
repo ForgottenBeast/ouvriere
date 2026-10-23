@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { LANDING_VARIANTS } from "../src/config/variants.ts";
@@ -31,4 +32,21 @@ test("each variant selects one explicit Stream MP4 source", () => {
     LANDING_VARIANTS.v2.streamMp4Url,
     "https://customer-spsh21dx72idjxm3.cloudflarestream.com/de890dcbcc7871e1b2114cf1f88f80e1/downloads/default.mp4"
   );
+  assert.equal(LANDING_VARIANTS.v3.mediaMode, "single");
+  assert.equal(LANDING_VARIANTS.v3.poster, "green");
+  assert.equal(
+    LANDING_VARIANTS.v3.streamMp4Url,
+    "https://customer-spsh21dx72idjxm3.cloudflarestream.com/bdcacf524d311c58a8a92f9f70ae34d4/downloads/default.mp4"
+  );
+});
+
+test("HeroVideo receives the selected poster instead of importing the ocean poster", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+
+  assert.doesNotMatch(hero, /calm-sea-waves-poster/);
+  assert.match(hero, /posterImage: ImageMetadata/);
+  assert.match(hero, /src=\{posterImage\}/);
 });

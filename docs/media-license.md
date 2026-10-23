@@ -71,3 +71,10 @@ The v2 typography self-hosts Cormorant Garamond Latin WOFF2 files under
 `src/assets/fonts/`. They are from Google Fonts' Cormorant Garamond family and
 are licensed under SIL Open Font License 1.1; the included `OFL.txt` is the
 license text. Source: <https://github.com/google/fonts/tree/main/ofl/cormorantgaramond>.
+
+## Green-only comparison loop
+
+`/v3/` uses the green-only loop derived from the same Kenan Turguç Pexels source. Its separate
+poster is `src/assets/media/green-waves-poster.jpg`, and its 4.37-second silent loop uses a
+0.75-second circular fade without ocean footage. Cloudflare Stream video ID
+`bdcacf524d311c58a8a92f9f70ae34d4` is the only v3 MP4 source.

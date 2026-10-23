@@ -1,15 +1,16 @@
 ---
 import { Image } from "astro:assets";
-import poster from "../assets/media/calm-sea-waves-poster.jpg";
+import type { ImageMetadata } from "astro";
 import { DEMO_TIMELINE } from "../config/demo";
 import { LANDING_VARIANTS, type LandingVariant } from "../config/variants";
 
 interface Props {
   posterURL: string;
+  posterImage: ImageMetadata;
   variant?: LandingVariant;
 }
 
-const { posterURL, variant = "v1" } = Astro.props;
+const { posterURL, posterImage, variant = "v1" } = Astro.props;
 const variantConfig = LANDING_VARIANTS[variant];
 const webmasterLine =
   "Zenchef - 63 avenue de Villiers 75017 Paris – webmaster{at}zenchef.com";
@@ -22,7 +23,7 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
 ---
 
 <main
-  class:list={["landing", { "nature-version": variant === "v2" }]}
+  class:list={["landing", { "nature-version": variant !== "v1" }]}
   data-demo-root
   data-demo-variant={variant}
   data-video-src={variantConfig.streamMp4Url}
@@ -31,7 +32,7 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
   <div class="media" aria-hidden="true">
     <Image
       class="poster"
-      src={poster}
+      src={posterImage}
       alt=""
       loading="eager"
       fetchpriority="high"
