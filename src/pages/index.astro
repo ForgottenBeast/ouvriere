@@ -1,16 +1,5 @@
 ---
-import HeroVideo from "@components/HeroVideo.astro";
-import DemoLayout from "@layouts/DemoLayout.astro";
-import { getImage } from "astro:assets";
-import poster from "../assets/media/calm-sea-waves-poster.jpg";
-
-const posterImage = await getImage({ src: poster, format: "webp" });
+import LandingDemo from "@components/LandingDemo.astro";
 ---
 
-<DemoLayout
-  title="L'Ouvriere"
-  description="La pleine mer en pleine terre."
-  image={{ src: posterImage.src, width: poster.width, height: poster.height }}
->
-  <HeroVideo posterURL={posterImage.src} />
-</DemoLayout>
+<LandingDemo root />

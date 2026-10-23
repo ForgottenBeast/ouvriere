@@ -17,6 +17,7 @@ const initialise = () => {
   const connection = (
     navigator as Navigator & { connection?: NavigatorConnection }
   ).connection;
+  const videoSourceURL = root.dataset.videoSrc || streamMp4Url;
   let mediaGeneration = 0;
   let finishTimer: number | undefined;
   const introCompletion =
@@ -81,13 +82,13 @@ const initialise = () => {
   const attachVideo = () => {
     if (
       !video ||
-      !canAttachVideo(streamMp4Url, mediaAllowed()) ||
+      !canAttachVideo(videoSourceURL, mediaAllowed()) ||
       video.querySelector("source")
     )
       return;
     const generation = ++mediaGeneration;
     const source = document.createElement("source");
-    source.src = streamMp4Url;
+    source.src = videoSourceURL;
     source.type = "video/mp4";
     video.append(source);
     video.load();

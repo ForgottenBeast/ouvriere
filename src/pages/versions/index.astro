@@ -1,0 +1,58 @@
+---
+const baseURL = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const faviconURL = `${baseURL}favicon.svg`;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href={faviconURL} />
+    <title>L'Ouvriere — versions</title>
+  </head>
+  <body>
+    <main>
+      <h1>L'Ouvriere</h1>
+      <nav aria-label="Versions de comparaison">
+        <a href={baseURL}>Version actuelle</a>
+        <a href={`${baseURL}v1/`}>v1 · mer actuelle</a>
+        <a href={`${baseURL}v2/`}>v2 · nature</a>
+      </nav>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+  :global(body) {
+    margin: 0;
+    background: #16252c;
+    color: #fff;
+    font-family: Georgia, serif;
+  }
+  main {
+    min-height: 100svh;
+    display: grid;
+    place-content: center;
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+  h1 {
+    margin: 0;
+    font-weight: 400;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  a {
+    color: inherit;
+  }
+</style>
