@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.5.0] - 2026-10-23
+
+### Added
+
+- Parallel baseline and nature-comparison routes at `/v1/`, `/v2/`, and `/versions/`.
+- Refined Cormorant Garamond typography for the nature comparison.
+
+### Changed
+
+- The v2 background uses an offline-composed Cloudflare Stream loop that crossfades the approved sea clips for 1.5 seconds in each direction.
+
 ## [4.4.2] - 2026-10-22
 
 ### Fixed
