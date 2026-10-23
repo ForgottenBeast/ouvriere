@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.6.0] - 2026-10-23
+
+### Added
+
+- A shareable green-waves-only `/v3/` comparison route with its own poster and Cloudflare Stream loop.
+
 ## [4.5.0] - 2026-10-23
 
 ### Added
