@@ -39,6 +39,10 @@ independent green-water poster and a single green-only looping Stream MP4. It mu
 back to the ocean poster or video, including with JavaScript disabled, reduced motion, Save-Data,
 or media playback failure.
 
+`/v4/` keeps the v3 green-only poster and Stream loop, Cormorant typography, and 2500 ms title
+timing while removing background blur from both the static poster/video composition and the
+enhanced media animation. Text animation is unchanged.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot
