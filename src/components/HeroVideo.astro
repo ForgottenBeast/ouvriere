@@ -27,9 +27,15 @@ const defaultMenuItems = [
 const menuItems =
   "menuItems" in variantConfig ? variantConfig.menuItems : defaultMenuItems;
 const isRadial = variant === "v6" || variant === "v7";
-const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${titleInEnd - titleInStart}ms;--quote-in-start:${quoteInStart}ms;--quote-in-duration:${quoteInEnd - quoteInStart}ms;--fade-out-start:${fadeOutStart}ms;--fade-out-duration:${fadeOutEnd - fadeOutStart}ms;`;
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
   `--menu-item-start:${start}ms;--menu-item-duration:${end - start}ms;`;
+const windRoseStyle =
+  "windRoseIn" in variantConfig
+    ? menuItemStyle(variantConfig.windRoseIn)
+    : undefined;
+const cardinalRotations = [0, 90, 180, 270];
+const diagonalRotations = [45, 135, 225, 315];
+const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${titleInEnd - titleInStart}ms;--quote-in-start:${quoteInStart}ms;--quote-in-duration:${quoteInEnd - quoteInStart}ms;--fade-out-start:${fadeOutStart}ms;--fade-out-duration:${fadeOutEnd - fadeOutStart}ms;`;
 ---
 
 <main
@@ -110,14 +116,27 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
       variant === "v7" && (
         <svg
           class="wind-rose"
-          viewBox="0 0 80 200"
+          viewBox="0 0 120 120"
           aria-hidden="true"
           focusable="false"
-          style={menuItemStyle(menuItemTimings[0])}
+          style={windRoseStyle}
         >
-          <polygon points="40,4 44,84 62,55 48,94 76,100 48,106 62,145 44,116 40,196 36,116 18,145 32,106 4,100 32,94 18,55 36,84" />
-          <path d="M40 100 40 4M40 100 62 55M40 100 76 100M40 100 62 145M40 100 40 196M40 100 18 145M40 100 4 100M40 100 18 55" />
-          <circle cx="40" cy="100" r="3" />
+          {cardinalRotations.map(rotation => (
+            <g transform={`rotate(${rotation} 60 60)`}>
+              <polygon class="wind-rose-face-light" points="60,4 60,60 56,56" />
+              <polygon class="wind-rose-face-dark" points="60,4 64,56 60,60" />
+            </g>
+          ))}
+          {diagonalRotations.map(rotation => (
+            <g transform={`rotate(${rotation} 60 60)`}>
+              <polygon
+                class="wind-rose-face-light"
+                points="60,22 60,60 57,57"
+              />
+              <polygon class="wind-rose-face-dark" points="60,22 63,57 60,60" />
+            </g>
+          ))}
+          <circle cx="60" cy="60" r="3" />
         </svg>
       )
     }
@@ -375,16 +394,22 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
     position: absolute;
     top: 50%;
     left: 50%;
-    width: min(clamp(3rem, 5vw, 5rem), 10vh);
-    height: min(clamp(8rem, 15vw, 13rem), calc(var(--radial-y) * 0.9));
+    width: min(clamp(5.625rem, 10vw, 8.75rem), calc(var(--radial-y) * 0.9));
+    height: min(clamp(5.625rem, 10vw, 8.75rem), calc(var(--radial-y) * 0.9));
     transform: translate(-50%, -50%);
     overflow: visible;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.1;
+    stroke-width: 0.9;
     stroke-linejoin: round;
     pointer-events: none;
     opacity: 0;
+  }
+  .wind-rose-face-light {
+    fill: rgba(255, 255, 255, 0.16);
+  }
+  .wind-rose-face-dark {
+    fill: rgba(255, 255, 255, 0.32);
   }
   .wind-rose polygon,
   .wind-rose path {
