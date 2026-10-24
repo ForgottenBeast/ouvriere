@@ -78,9 +78,26 @@ test("v6 preserves v5 media while using a four-direction radial timeline", () =>
   ]);
 });
 
-test("v7 reuses v6's radial labels and timing with a single wind rose", () => {
-  assert.deepEqual(LANDING_VARIANTS.v7.timeline, LANDING_VARIANTS.v6.timeline);
-  assert.deepEqual(LANDING_VARIANTS.v7.menuItems, LANDING_VARIANTS.v6.menuItems);
+test("v7 sequences a wind rose and clockwise labels without changing v6", () => {
+  assert.deepEqual(LANDING_VARIANTS.v6.timeline.menuItemIn, [
+    [6190, 6990],
+    [6815, 7615],
+    [7440, 8240],
+    [8065, 8865],
+  ]);
+  assert.deepEqual(LANDING_VARIANTS.v7.windRoseIn, [6190, 6990]);
+  assert.deepEqual(LANDING_VARIANTS.v7.timeline.menuItemIn, [
+    [6990, 7790],
+    [7790, 8590],
+    [8590, 9390],
+    [9390, 10190],
+  ]);
+  assert.deepEqual(LANDING_VARIANTS.v7.menuItems, [
+    { label: "Découvrir", direction: "top" },
+    { label: "Offrir", direction: "right" },
+    { label: "Déguster", direction: "bottom" },
+    { label: "Réserver", direction: "left" },
+  ]);
   assert.equal(LANDING_VARIANTS.v7.poster, LANDING_VARIANTS.v6.poster);
   assert.equal(
     LANDING_VARIANTS.v7.streamMp4Url,
@@ -100,14 +117,19 @@ test("v7 renders one gated wind rose while v6 retains the curved arrows", async 
   assert.match(hero, /variant === "v6" && \(/);
   assert.match(hero, /variant === "v7" && \(/);
   assert.match(hero, /class="wind-rose"/);
-  assert.match(hero, /viewBox="0 0 80 200"/);
+  assert.match(hero, /viewBox="0 0 120 120"/);
+  assert.match(hero, /cardinalRotations/);
+  assert.match(hero, /diagonalRotations/);
+  assert.match(hero, /wind-rose-face-light/);
+  assert.match(hero, /wind-rose-face-dark/);
   assert.match(hero, /aria-hidden="true"/);
   assert.match(hero, /\.radial-menu\.is-enhanced \.wind-rose/);
   assert.match(hero, /\.radial-menu:not\(\.is-enhanced\) \.wind-rose/);
-  assert.match(hero, /width: min\(clamp\(3rem, 5vw, 5rem\), 10vh\);/);
+  assert.match(hero, /windRoseIn/);
+  assert.match(hero, /width: min\(clamp\(5\.625rem, 10vw, 8\.75rem\), calc\(var\(--radial-y\) \* 0\.9\)\);/);
   assert.match(
     hero,
-    /height: min\(clamp\(8rem, 15vw, 13rem\), calc\(var\(--radial-y\) \* 0\.9\)\);/
+    /height: min\(clamp\(5\.625rem, 10vw, 8\.75rem\), calc\(var\(--radial-y\) \* 0\.9\)\);/
   );
 });
 

@@ -21,6 +21,24 @@ const radialMenuItems = [
   { label: "Offrir", direction: "right" },
 ] as const;
 
+const v7Timeline = {
+  ...DEMO_TIMELINE,
+  titleIn: [0, 3250],
+  menuItemIn: [
+    [6990, 7790],
+    [7790, 8590],
+    [8590, 9390],
+    [9390, 10190],
+  ],
+} as const;
+
+const v7MenuItems = [
+  { label: "Découvrir", direction: "top" },
+  { label: "Offrir", direction: "right" },
+  { label: "Déguster", direction: "bottom" },
+  { label: "Réserver", direction: "left" },
+] as const;
+
 export type LandingVariant = "v1" | "v2" | "v3" | "v4" | "v5" | "v6" | "v7";
 
 export const LANDING_VARIANTS = {
@@ -99,8 +117,9 @@ export const LANDING_VARIANTS = {
   v7: {
     id: "v7",
     title: "L'Ouvriere — v7",
-    timeline: radialTimeline,
-    menuItems: radialMenuItems,
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: v7MenuItems,
     mediaMode: "single",
     poster: "ocean-v5",
     backgroundBlurPx: 0,
