@@ -3,7 +3,7 @@ import { DEMO_TIMELINE } from "./demo.ts";
 const originalStreamMp4Url =
   "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9741a9cf044d648f924291e94598083c/downloads/default.mp4";
 
-export type LandingVariant = "v1" | "v2" | "v3" | "v4";
+export type LandingVariant = "v1" | "v2" | "v3" | "v4" | "v5";
 
 export const LANDING_VARIANTS = {
   v1: {
@@ -53,5 +53,18 @@ export const LANDING_VARIANTS = {
     backgroundBlurPx: 0,
     streamMp4Url:
       "https://customer-spsh21dx72idjxm3.cloudflarestream.com/bdcacf524d311c58a8a92f9f70ae34d4/downloads/default.mp4",
+  },
+  v5: {
+    id: "v5",
+    title: "L'Ouvriere — v5",
+    timeline: {
+      ...DEMO_TIMELINE,
+      titleIn: [0, 2500],
+    },
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
   },
 } as const;

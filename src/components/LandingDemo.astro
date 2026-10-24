@@ -2,6 +2,7 @@
 import { getImage } from "astro:assets";
 import oceanPoster from "../assets/media/calm-sea-waves-poster.jpg";
 import greenPoster from "../assets/media/green-waves-poster.jpg";
+import oceanV5Poster from "../assets/media/ocean-v5-poster.jpg";
 import { LANDING_VARIANTS, type LandingVariant } from "../config/variants";
 import DemoLayout from "../layouts/DemoLayout.astro";
 import HeroVideo from "./HeroVideo.astro";
@@ -12,8 +13,12 @@ interface Props {
 }
 
 const { variant = "v1", root = false } = Astro.props;
-const poster =
-  LANDING_VARIANTS[variant].poster === "green" ? greenPoster : oceanPoster;
+const posters = {
+  ocean: oceanPoster,
+  green: greenPoster,
+  "ocean-v5": oceanV5Poster,
+};
+const poster = posters[LANDING_VARIANTS[variant].poster];
 const posterImage = await getImage({ src: poster, format: "webp" });
 const title = root ? "L'Ouvriere" : `L'Ouvriere — ${variant}`;
 ---

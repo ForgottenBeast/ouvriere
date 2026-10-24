@@ -44,6 +44,26 @@ test("each variant selects one explicit Stream MP4 source", () => {
     LANDING_VARIANTS.v4.streamMp4Url,
     LANDING_VARIANTS.v3.streamMp4Url
   );
+  assert.equal(LANDING_VARIANTS.v5.mediaMode, "single");
+  assert.equal(LANDING_VARIANTS.v5.poster, "ocean-v5");
+  assert.equal(LANDING_VARIANTS.v5.backgroundBlurPx, 0);
+  assert.deepEqual(LANDING_VARIANTS.v5.timeline.titleIn, [0, 2500]);
+  assert.equal(
+    LANDING_VARIANTS.v5.streamMp4Url,
+    "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4"
+  );
+});
+
+test("v5 maps its own poster to the rendered image and metadata", async () => {
+  const landingDemo = await readFile(
+    new URL("../src/components/LandingDemo.astro", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(landingDemo, /ocean-v5-poster/);
+  assert.match(landingDemo, /"ocean-v5": oceanV5Poster/);
+  assert.match(landingDemo, /posterImage=\{poster\}/);
+  assert.match(landingDemo, /image=\{\{ src: posterImage\.src/);
 });
 
 test("HeroVideo receives the selected poster instead of importing the ocean poster", async () => {

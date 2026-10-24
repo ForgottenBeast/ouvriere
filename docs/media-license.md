@@ -78,3 +78,12 @@ license text. Source: <https://github.com/google/fonts/tree/main/ofl/cormorantga
 poster is `src/assets/media/green-waves-poster.jpg`, and its 4.37-second silent loop uses a
 0.75-second circular fade without ocean footage. Cloudflare Stream video ID
 `bdcacf524d311c58a8a92f9f70ae34d4` is the only v3 MP4 source.
+
+## User-provided ocean comparison
+
+`/v5/` uses a portrait ocean loop supplied by the project user. The original `ocean.mp4` stays
+outside Git and is not redistributed by this repository. The matching fallback poster is
+`src/assets/media/ocean-v5-poster.jpg`, extracted from that source at its native 720 × 1280
+aspect ratio. No third-party author or stock licence is asserted for this user-provided clip.
+Cloudflare Stream video ID `9f1cb85817b73966e4732bee3e14edcc` serves its 7.4-second,
+2,182,734-byte MP4 through the v5 comparison route.
