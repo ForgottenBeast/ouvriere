@@ -39,7 +39,15 @@ const v7MenuItems = [
   { label: "Réserver", direction: "left" },
 ] as const;
 
-export type LandingVariant = "v1" | "v2" | "v3" | "v4" | "v5" | "v6" | "v7";
+export type LandingVariant =
+  | "v1"
+  | "v2"
+  | "v3"
+  | "v4"
+  | "v5"
+  | "v6"
+  | "v7"
+  | "v8";
 
 export const LANDING_VARIANTS = {
   v1: {
@@ -117,6 +125,18 @@ export const LANDING_VARIANTS = {
   v7: {
     id: "v7",
     title: "L'Ouvriere — v7",
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: v7MenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+  },
+  v8: {
+    id: "v8",
+    title: "L'Ouvriere — v8",
     timeline: v7Timeline,
     windRoseIn: [6190, 6990],
     menuItems: v7MenuItems,

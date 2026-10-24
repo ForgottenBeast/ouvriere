@@ -106,6 +106,37 @@ test("v7 sequences a wind rose and clockwise labels without changing v6", () => 
   assert.equal(LANDING_VARIANTS.v7.backgroundBlurPx, 0);
 });
 
+test("v8 preserves v7's sequence and media for the reference compass", () => {
+  assert.deepEqual(LANDING_VARIANTS.v8.timeline, LANDING_VARIANTS.v7.timeline);
+  assert.deepEqual(LANDING_VARIANTS.v8.windRoseIn, [6190, 6990]);
+  assert.deepEqual(LANDING_VARIANTS.v8.menuItems, LANDING_VARIANTS.v7.menuItems);
+  assert.equal(LANDING_VARIANTS.v8.poster, LANDING_VARIANTS.v7.poster);
+  assert.equal(
+    LANDING_VARIANTS.v8.streamMp4Url,
+    LANDING_VARIANTS.v7.streamMp4Url
+  );
+  assert.deepEqual(LANDING_VARIANTS.v7.windRoseIn, [6190, 6990]);
+});
+
+test("v8 renders a dotted cardinal reference compass without changing v7", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(hero, /variant === "v8" && \(/);
+  assert.match(hero, /class="wind-rose reference-compass"/);
+  assert.match(hero, /viewBox="30 30 160 160"/);
+  assert.match(hero, /reference-compass-hub/);
+  assert.match(hero, /cardinalRotations/);
+  assert.match(hero, /diagonalRotations/);
+  assert.match(hero, /referenceIntermediateRotations/);
+  assert.match(hero, /points="110,60 110,110 103,104"/);
+  assert.match(hero, /points="110,60 117,104 110,110"/);
+  assert.doesNotMatch(hero, /reference-compass-ring/);
+  assert.doesNotMatch(hero, /reference-compass-letter/);
+});
+
 test("v7 renders one gated wind rose while v6 retains the curved arrows", async () => {
   const hero = await readFile(
     new URL("../src/components/HeroVideo.astro", import.meta.url),
@@ -148,7 +179,10 @@ test("the radial menu binds each inert label and arrow to one timed item", async
     "utf8"
   );
 
-  assert.match(hero, /const isRadial = variant === "v6" \|\| variant === "v7"/);
+  assert.match(
+    hero,
+    /const isRadial = variant === "v6" \|\| variant === "v7" \|\| variant === "v8"/
+  );
   assert.match(hero, /"radial-menu": isRadial/);
   assert.match(hero, /menuItems\.map\(\(item, index\)/);
   assert.match(hero, /class="menu-arrow"/);

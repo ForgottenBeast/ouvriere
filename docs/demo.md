@@ -62,6 +62,10 @@ top: Découvrir (6990–7790 ms), Offrir (7790–8590 ms), Déguster (8590–939
 in static reduced-motion and no-JavaScript layouts. Its square footprint is twice the preceding
 comparison scale while its vector-effect outline remains a 0.225 px decorative line.
 
+`/v8/` preserves v7's media, timings, and clockwise label order. Its reference compass is an
+ivory SVG of fine split needles and a small faceted hub. It remains decorative and follows the
+same 6190–6990 ms appearance and static fallback rules as v7's compass.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot

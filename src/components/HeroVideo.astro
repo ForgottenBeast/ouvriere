@@ -26,7 +26,7 @@ const defaultMenuItems = [
 ] as const;
 const menuItems =
   "menuItems" in variantConfig ? variantConfig.menuItems : defaultMenuItems;
-const isRadial = variant === "v6" || variant === "v7";
+const isRadial = variant === "v6" || variant === "v7" || variant === "v8";
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
   `--menu-item-start:${start}ms;--menu-item-duration:${end - start}ms;`;
 const windRoseStyle =
@@ -35,6 +35,9 @@ const windRoseStyle =
     : undefined;
 const cardinalRotations = [0, 90, 180, 270];
 const diagonalRotations = [45, 135, 225, 315];
+const referenceIntermediateRotations = [
+  22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5,
+];
 const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${titleInEnd - titleInStart}ms;--quote-in-start:${quoteInStart}ms;--quote-in-duration:${quoteInEnd - quoteInStart}ms;--fade-out-start:${fadeOutStart}ms;--fade-out-duration:${fadeOutEnd - fadeOutStart}ms;`;
 ---
 
@@ -137,6 +140,59 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
             </g>
           ))}
           <circle cx="60" cy="60" r="3" />
+        </svg>
+      )
+    }
+    {
+      variant === "v8" && (
+        <svg
+          class="wind-rose reference-compass"
+          viewBox="30 30 160 160"
+          aria-hidden="true"
+          focusable="false"
+          style={windRoseStyle}
+        >
+          {cardinalRotations.map(rotation => (
+            <g transform={`rotate(${rotation} 110 110)`}>
+              <polygon
+                class="reference-compass-face-light"
+                points="110,35 110,110 106,104"
+              />
+              <polygon
+                class="reference-compass-face-dark"
+                points="110,35 114,104 110,110"
+              />
+              <path class="reference-compass-spine" d="M110 110 110 35" />
+            </g>
+          ))}
+          {diagonalRotations.map(rotation => (
+            <g transform={`rotate(${rotation} 110 110)`}>
+              <polygon
+                class="reference-compass-face-light"
+                points="110,60 110,110 103,104"
+              />
+              <polygon
+                class="reference-compass-face-dark"
+                points="110,60 117,104 110,110"
+              />
+            </g>
+          ))}
+          {referenceIntermediateRotations.map(rotation => (
+            <g transform={`rotate(${rotation} 110 110)`}>
+              <polygon
+                class="reference-compass-face-light"
+                points="110,76 110,110 108,107"
+              />
+              <polygon
+                class="reference-compass-face-dark"
+                points="110,76 112,107 110,110"
+              />
+            </g>
+          ))}
+          <polygon
+            class="reference-compass-hub"
+            points="110,104 116,110 110,116 104,110"
+          />
         </svg>
       )
     }
@@ -415,6 +471,22 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   .wind-rose path,
   .wind-rose circle {
     vector-effect: non-scaling-stroke;
+  }
+  .reference-compass {
+    stroke: #fffaf0;
+    stroke-width: 0.72;
+  }
+  .reference-compass-face-light {
+    fill: rgba(255, 250, 240, 0.12);
+  }
+  .reference-compass-face-dark {
+    fill: rgba(255, 250, 240, 0.28);
+  }
+  .reference-compass-spine {
+    fill: none;
+  }
+  .reference-compass-hub {
+    fill: rgba(255, 250, 240, 0.22);
   }
   .radial-menu.is-enhanced .wind-rose {
     animation: menu-item-in var(--menu-item-duration) var(--menu-item-start)
