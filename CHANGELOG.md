@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.13.1] - 2026-10-24
+
+### Fixed
+
+- Corrected V7 and V8 visible titles and radial label spacing.
+
 ## [4.13.0] - 2026-10-24
 
 ### Added
