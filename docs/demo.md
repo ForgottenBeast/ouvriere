@@ -43,6 +43,11 @@ or media playback failure.
 timing while removing background blur from both the static poster/video composition and the
 enhanced media animation. Text animation is unchanged.
 
+`/v5/` keeps v4's unblurred composition, Cormorant typography, and 2500 ms title timing with a
+separate portrait poster and a single Stream loop derived from media supplied by the project
+user. It must use that matching poster for the visible fallback, video poster, and social image;
+it must never fall back to either the original ocean or green comparison assets.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot
