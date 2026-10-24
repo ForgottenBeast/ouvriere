@@ -78,6 +78,39 @@ test("v6 preserves v5 media while using a four-direction radial timeline", () =>
   ]);
 });
 
+test("v7 reuses v6's radial labels and timing with a single wind rose", () => {
+  assert.deepEqual(LANDING_VARIANTS.v7.timeline, LANDING_VARIANTS.v6.timeline);
+  assert.deepEqual(LANDING_VARIANTS.v7.menuItems, LANDING_VARIANTS.v6.menuItems);
+  assert.equal(LANDING_VARIANTS.v7.poster, LANDING_VARIANTS.v6.poster);
+  assert.equal(
+    LANDING_VARIANTS.v7.streamMp4Url,
+    LANDING_VARIANTS.v6.streamMp4Url
+  );
+  assert.equal(LANDING_VARIANTS.v7.backgroundBlurPx, 0);
+});
+
+test("v7 renders one gated wind rose while v6 retains the curved arrows", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(hero, /"radial-menu": isRadial/);
+  assert.match(hero, /"menuItems" in variantConfig/);
+  assert.match(hero, /variant === "v6" && \(/);
+  assert.match(hero, /variant === "v7" && \(/);
+  assert.match(hero, /class="wind-rose"/);
+  assert.match(hero, /viewBox="0 0 80 200"/);
+  assert.match(hero, /aria-hidden="true"/);
+  assert.match(hero, /\.radial-menu\.is-enhanced \.wind-rose/);
+  assert.match(hero, /\.radial-menu:not\(\.is-enhanced\) \.wind-rose/);
+  assert.match(hero, /width: min\(clamp\(3rem, 5vw, 5rem\), 10vh\);/);
+  assert.match(
+    hero,
+    /height: min\(clamp\(8rem, 15vw, 13rem\), calc\(var\(--radial-y\) \* 0\.9\)\);/
+  );
+});
+
 test("the radial menu binds each inert label and arrow to one timed item", async () => {
   const hero = await readFile(
     new URL("../src/components/HeroVideo.astro", import.meta.url),
@@ -88,7 +121,8 @@ test("the radial menu binds each inert label and arrow to one timed item", async
     "utf8"
   );
 
-  assert.match(hero, /"radial-menu": variant === "v6"/);
+  assert.match(hero, /const isRadial = variant === "v6" \|\| variant === "v7"/);
+  assert.match(hero, /"radial-menu": isRadial/);
   assert.match(hero, /menuItems\.map\(\(item, index\)/);
   assert.match(hero, /class="menu-arrow"/);
   assert.match(hero, /data-intro-completion=/);

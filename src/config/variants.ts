@@ -3,7 +3,25 @@ import { DEMO_TIMELINE } from "./demo.ts";
 const originalStreamMp4Url =
   "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9741a9cf044d648f924291e94598083c/downloads/default.mp4";
 
-export type LandingVariant = "v1" | "v2" | "v3" | "v4" | "v5" | "v6";
+const radialTimeline = {
+  ...DEMO_TIMELINE,
+  titleIn: [0, 3250],
+  menuItemIn: [
+    [6190, 6990],
+    [6815, 7615],
+    [7440, 8240],
+    [8065, 8865],
+  ],
+} as const;
+
+const radialMenuItems = [
+  { label: "Découvrir", direction: "top" },
+  { label: "Déguster", direction: "bottom" },
+  { label: "Réserver", direction: "left" },
+  { label: "Offrir", direction: "right" },
+] as const;
+
+export type LandingVariant = "v1" | "v2" | "v3" | "v4" | "v5" | "v6" | "v7";
 
 export const LANDING_VARIANTS = {
   v1: {
@@ -70,22 +88,19 @@ export const LANDING_VARIANTS = {
   v6: {
     id: "v6",
     title: "L'Ouvriere — v6",
-    timeline: {
-      ...DEMO_TIMELINE,
-      titleIn: [0, 3250],
-      menuItemIn: [
-        [6190, 6990],
-        [6815, 7615],
-        [7440, 8240],
-        [8065, 8865],
-      ],
-    },
-    menuItems: [
-      { label: "Découvrir", direction: "top" },
-      { label: "Déguster", direction: "bottom" },
-      { label: "Réserver", direction: "left" },
-      { label: "Offrir", direction: "right" },
-    ],
+    timeline: radialTimeline,
+    menuItems: radialMenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+  },
+  v7: {
+    id: "v7",
+    title: "L'Ouvriere — v7",
+    timeline: radialTimeline,
+    menuItems: radialMenuItems,
     mediaMode: "single",
     poster: "ocean-v5",
     backgroundBlurPx: 0,
