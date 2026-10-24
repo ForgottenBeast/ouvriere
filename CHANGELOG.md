@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.10.0] - 2026-10-24
+
+### Added
+
+- A shareable wind-rose `/v7/` comparison route with one central tall, slender decorative rose.
+
 ## [4.9.0] - 2026-10-24
 
 ### Added
