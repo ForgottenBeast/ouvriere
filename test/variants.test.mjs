@@ -118,6 +118,45 @@ test("v8 preserves v7's sequence and media for the reference compass", () => {
   assert.deepEqual(LANDING_VARIANTS.v7.windRoseIn, [6190, 6990]);
 });
 
+test("v7 and v8 use the requested visible Ouvrière hero title only", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(
+    hero,
+    /const heroTitle =\s+variant === "v7" \|\| variant === "v8" \? "Ouvrière" : "L'Ouvriere";/
+  );
+  assert.match(hero, /<h1>\{heroTitle\}<\/h1>/);
+  assert.match(hero, /<section class="intro" aria-label=\{heroTitle\}>/);
+});
+
+test("v7 and v8 align desktop radial labels on the vertical radius", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(
+    hero,
+    /const hasEqualRadialLabelSpacing = variant === "v7" \|\| variant === "v8";/
+  );
+  assert.match(hero, /"equal-radial-label-spacing": hasEqualRadialLabelSpacing/);
+  assert.match(
+    hero,
+    /\.equal-radial-label-spacing\.is-enhanced \.menu \{\s+--radial-x: var\(--radial-y\);/
+  );
+  assert.match(
+    hero,
+    /@media \(min-width: 40\.0625rem\) and \(max-height: 30rem\) \{\s+\.equal-radial-label-spacing\.is-enhanced \.menu \{\s+--radial-y: min\(10rem, calc\(50vh - 2rem\)\);/
+  );
+  assert.match(
+    hero,
+    /\.equal-radial-label-spacing\.is-enhanced \.wind-rose \{\s+width: min\(clamp\(11\.25rem, 20vw, 17\.5rem\), calc\(min\(22vh, 15rem\) \* 1\.8\)\);/
+  );
+});
+
 test("v8 renders a dotted cardinal reference compass without changing v7", async () => {
   const hero = await readFile(
     new URL("../src/components/HeroVideo.astro", import.meta.url),

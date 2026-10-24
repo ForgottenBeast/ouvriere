@@ -27,6 +27,9 @@ const defaultMenuItems = [
 const menuItems =
   "menuItems" in variantConfig ? variantConfig.menuItems : defaultMenuItems;
 const isRadial = variant === "v6" || variant === "v7" || variant === "v8";
+const hasEqualRadialLabelSpacing = variant === "v7" || variant === "v8";
+const heroTitle =
+  variant === "v7" || variant === "v8" ? "Ouvrière" : "L'Ouvriere";
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
   `--menu-item-start:${start}ms;--menu-item-duration:${end - start}ms;`;
 const windRoseStyle =
@@ -48,6 +51,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       "nature-version": variant !== "v1",
       "no-blur": variantConfig.backgroundBlurPx === 0,
       "radial-menu": isRadial,
+      "equal-radial-label-spacing": hasEqualRadialLabelSpacing,
     },
   ]}
   data-demo-root
@@ -75,8 +79,8 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       poster={posterURL}></video>
   </div>
   <div class="scrim" aria-hidden="true"></div>
-  <section class="intro" aria-label="L'Ouvriere">
-    <div class="title-lock"><h1>L'Ouvriere</h1></div>
+  <section class="intro" aria-label={heroTitle}>
+    <div class="title-lock"><h1>{heroTitle}</h1></div>
     <div class="intro-copy">
       <p class="quote"><em>La pleine mer en pleine terre</em></p><p
         class="attribution"
@@ -668,6 +672,20 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     .radial-menu.is-enhanced .menu {
       --radial-x: min(34vw, 11rem);
       --radial-y: min(18vh, 8rem);
+    }
+  }
+  @media (min-width: 40.0625rem) {
+    .equal-radial-label-spacing.is-enhanced .menu {
+      --radial-x: var(--radial-y);
+    }
+  }
+  @media (min-width: 40.0625rem) and (max-height: 30rem) {
+    .equal-radial-label-spacing.is-enhanced .menu {
+      --radial-y: min(10rem, calc(50vh - 2rem));
+    }
+    .equal-radial-label-spacing.is-enhanced .wind-rose {
+      width: min(clamp(11.25rem, 20vw, 17.5rem), calc(min(22vh, 15rem) * 1.8));
+      height: min(clamp(11.25rem, 20vw, 17.5rem), calc(min(22vh, 15rem) * 1.8));
     }
   }
   @media (max-height: 20rem) {
