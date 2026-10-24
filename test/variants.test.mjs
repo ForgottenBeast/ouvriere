@@ -126,11 +126,16 @@ test("v7 renders one gated wind rose while v6 retains the curved arrows", async 
   assert.match(hero, /\.radial-menu\.is-enhanced \.wind-rose/);
   assert.match(hero, /\.radial-menu:not\(\.is-enhanced\) \.wind-rose/);
   assert.match(hero, /windRoseIn/);
-  assert.match(hero, /width: min\(clamp\(5\.625rem, 10vw, 8\.75rem\), calc\(var\(--radial-y\) \* 0\.9\)\);/);
   assert.match(
     hero,
-    /height: min\(clamp\(5\.625rem, 10vw, 8\.75rem\), calc\(var\(--radial-y\) \* 0\.9\)\);/
+    /width: min\(clamp\(11\.25rem, 20vw, 17\.5rem\), calc\(var\(--radial-y\) \* 1\.8\)\);/
   );
+  assert.match(
+    hero,
+    /height: min\(clamp\(11\.25rem, 20vw, 17\.5rem\), calc\(var\(--radial-y\) \* 1\.8\)\);/
+  );
+  assert.match(hero, /stroke-width: 0\.225;/);
+  assert.match(hero, /\.wind-rose circle/);
 });
 
 test("the radial menu binds each inert label and arrow to one timed item", async () => {

@@ -394,13 +394,13 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     position: absolute;
     top: 50%;
     left: 50%;
-    width: min(clamp(5.625rem, 10vw, 8.75rem), calc(var(--radial-y) * 0.9));
-    height: min(clamp(5.625rem, 10vw, 8.75rem), calc(var(--radial-y) * 0.9));
+    width: min(clamp(11.25rem, 20vw, 17.5rem), calc(var(--radial-y) * 1.8));
+    height: min(clamp(11.25rem, 20vw, 17.5rem), calc(var(--radial-y) * 1.8));
     transform: translate(-50%, -50%);
     overflow: visible;
     fill: none;
     stroke: currentColor;
-    stroke-width: 0.9;
+    stroke-width: 0.225;
     stroke-linejoin: round;
     pointer-events: none;
     opacity: 0;
@@ -412,7 +412,8 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     fill: rgba(255, 255, 255, 0.32);
   }
   .wind-rose polygon,
-  .wind-rose path {
+  .wind-rose path,
+  .wind-rose circle {
     vector-effect: non-scaling-stroke;
   }
   .radial-menu.is-enhanced .wind-rose {

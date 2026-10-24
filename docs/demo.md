@@ -59,7 +59,8 @@ non-overlapping static list without those decorative arrows.
 6190–6990 ms after the intro fades. Four labels then fade in without overlap clockwise from the
 top: Découvrir (6990–7790 ms), Offrir (7790–8590 ms), Déguster (8590–9390 ms), and Réserver
 (9390–10190 ms). The wind rose remains visible after completion or an intro skip, and is hidden
-in static reduced-motion and no-JavaScript layouts.
+in static reduced-motion and no-JavaScript layouts. Its square footprint is twice the preceding
+comparison scale while its vector-effect outline remains a 0.225 px decorative line.
 
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
