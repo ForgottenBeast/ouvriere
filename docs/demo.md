@@ -48,6 +48,13 @@ separate portrait poster and a single Stream loop derived from media supplied by
 user. It must use that matching poster for the visible fallback, video poster, and social image;
 it must never fall back to either the original ocean or green comparison assets.
 
+`/v6/` retains v5's media, unblurred composition, and fallback behavior. Its title entrance
+lasts 3250 ms. After the shared 5000–6190 ms intro fade, four display-only labels appear in a
+radial arrangement: Découvrir above, Déguster below, Réserver left, and Offrir right. Their
+800 ms fades start at 6190 ms, 6815 ms, 7440 ms, and 8065 ms, completing at 8865 ms. Each
+label owns a decorative outward curved arrow; reduced-motion and no-JavaScript states retain a
+non-overlapping static list without those decorative arrows.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot

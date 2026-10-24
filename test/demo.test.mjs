@@ -22,8 +22,8 @@ test("the display-only menu uses the approved cuisine label", async () => {
     new URL("../src/components/HeroVideo.astro", import.meta.url),
     "utf8"
   );
-  assert.match(component, />La cuisine<\/li>/);
-  assert.doesNotMatch(component, />La maison<\/li>/);
+  assert.match(component, /label: "La cuisine"/);
+  assert.doesNotMatch(component, /label: "La maison"/);
 });
 
 test("video sources require both a URL and permission to use media", () => {

@@ -21,6 +21,7 @@ const initialise = () => {
   let mediaGeneration = 0;
   let finishTimer: number | undefined;
   const introCompletion =
+    Number(root.dataset.introCompletion) ||
     DEMO_TIMELINE.menuItemIn[DEMO_TIMELINE.menuItemIn.length - 1][1];
 
   const setPlaybackControl = () => {
