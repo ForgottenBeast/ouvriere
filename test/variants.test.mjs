@@ -54,6 +54,48 @@ test("each variant selects one explicit Stream MP4 source", () => {
   );
 });
 
+test("v6 preserves v5 media while using a four-direction radial timeline", () => {
+  assert.deepEqual(LANDING_VARIANTS.v5.timeline.titleIn, [0, 2500]);
+  assert.equal(LANDING_VARIANTS.v6.poster, LANDING_VARIANTS.v5.poster);
+  assert.equal(
+    LANDING_VARIANTS.v6.streamMp4Url,
+    LANDING_VARIANTS.v5.streamMp4Url
+  );
+  assert.equal(LANDING_VARIANTS.v6.backgroundBlurPx, 0);
+  assert.deepEqual(LANDING_VARIANTS.v6.timeline.titleIn, [0, 3250]);
+  assert.deepEqual(LANDING_VARIANTS.v6.timeline.sharedFadeOut, [5000, 6190]);
+  assert.deepEqual(LANDING_VARIANTS.v6.timeline.menuItemIn, [
+    [6190, 6990],
+    [6815, 7615],
+    [7440, 8240],
+    [8065, 8865],
+  ]);
+  assert.deepEqual(LANDING_VARIANTS.v6.menuItems, [
+    { label: "Découvrir", direction: "top" },
+    { label: "Déguster", direction: "bottom" },
+    { label: "Réserver", direction: "left" },
+    { label: "Offrir", direction: "right" },
+  ]);
+});
+
+test("the radial menu binds each inert label and arrow to one timed item", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+  const demo = await readFile(
+    new URL("../src/scripts/demo.ts", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(hero, /"radial-menu": variant === "v6"/);
+  assert.match(hero, /menuItems\.map\(\(item, index\)/);
+  assert.match(hero, /class="menu-arrow"/);
+  assert.match(hero, /data-intro-completion=/);
+  assert.match(hero, /\.radial-menu\.is-enhanced \.menu-item/);
+  assert.match(demo, /root\.dataset\.introCompletion/);
+});
+
 test("v5 maps its own poster to the rendered image and metadata", async () => {
   const landingDemo = await readFile(
     new URL("../src/components/LandingDemo.astro", import.meta.url),
