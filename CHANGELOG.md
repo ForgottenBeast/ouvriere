@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.9.0] - 2026-10-24
+
+### Added
+
+- A shareable radial-menu `/v6/` comparison route with four inert labels and curved arrows.
+
 ## [4.8.0] - 2026-10-24
 
 ### Added
