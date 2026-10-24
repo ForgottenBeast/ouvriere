@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.11.0] - 2026-10-24
+
+### Changed
+
+- Refined the `/v7/` wind-rose sequence with a dedicated symmetric rose phase and clockwise label reveal.
+
 ## [4.10.0] - 2026-10-24
 
 ### Added
