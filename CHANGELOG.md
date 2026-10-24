@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.12.0] - 2026-10-24
+
+### Changed
+
+- Doubled the `/v7/` wind-rose dimensions and reduced its non-scaling SVG stroke width.
+
 ## [4.11.0] - 2026-10-24
 
 ### Changed
