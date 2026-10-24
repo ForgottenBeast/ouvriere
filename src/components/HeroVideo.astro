@@ -25,7 +25,8 @@ const defaultMenuItems = [
   { label: "Offre du moment" },
 ] as const;
 const menuItems =
-  variant === "v6" ? LANDING_VARIANTS.v6.menuItems : defaultMenuItems;
+  "menuItems" in variantConfig ? variantConfig.menuItems : defaultMenuItems;
+const isRadial = variant === "v6" || variant === "v7";
 const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${titleInEnd - titleInStart}ms;--quote-in-start:${quoteInStart}ms;--quote-in-duration:${quoteInEnd - quoteInStart}ms;--fade-out-start:${fadeOutStart}ms;--fade-out-duration:${fadeOutEnd - fadeOutStart}ms;`;
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
   `--menu-item-start:${start}ms;--menu-item-duration:${end - start}ms;`;
@@ -37,7 +38,7 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
     {
       "nature-version": variant !== "v1",
       "no-blur": variantConfig.backgroundBlurPx === 0,
-      "radial-menu": variant === "v6",
+      "radial-menu": isRadial,
     },
   ]}
   data-demo-root
@@ -105,6 +106,21 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
         ))
       }
     </ul>
+    {
+      variant === "v7" && (
+        <svg
+          class="wind-rose"
+          viewBox="0 0 80 200"
+          aria-hidden="true"
+          focusable="false"
+          style={menuItemStyle(menuItemTimings[0])}
+        >
+          <polygon points="40,4 44,84 62,55 48,94 76,100 48,106 62,145 44,116 40,196 36,116 18,145 32,106 4,100 32,94 18,55 36,84" />
+          <path d="M40 100 40 4M40 100 62 55M40 100 76 100M40 100 62 145M40 100 40 196M40 100 18 145M40 100 4 100M40 100 18 55" />
+          <circle cx="40" cy="100" r="3" />
+        </svg>
+      )
+    }
   </section>
   <div class="controls">
     <button type="button" data-intro-skip aria-hidden="true" tabindex="-1"
@@ -355,6 +371,32 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
   .radial-menu:not(.is-enhanced) .menu-arrow {
     display: none;
   }
+  .wind-rose {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(clamp(3rem, 5vw, 5rem), 10vh);
+    height: min(clamp(8rem, 15vw, 13rem), calc(var(--radial-y) * 0.9));
+    transform: translate(-50%, -50%);
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .wind-rose polygon,
+  .wind-rose path {
+    vector-effect: non-scaling-stroke;
+  }
+  .radial-menu.is-enhanced .wind-rose {
+    animation: menu-item-in var(--menu-item-duration) var(--menu-item-start)
+      ease both;
+  }
+  .radial-menu:not(.is-enhanced) .wind-rose {
+    display: none;
+  }
   .controls {
     position: absolute;
     right: 1rem;
@@ -451,6 +493,10 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
     display: none;
   }
   [data-demo-root].is-complete .menu li {
+    opacity: 1;
+    animation: none;
+  }
+  [data-demo-root].is-complete .wind-rose {
     opacity: 1;
     animation: none;
   }

@@ -55,6 +55,11 @@ radial arrangement: Découvrir above, Déguster below, Réserver left, and Offri
 label owns a decorative outward curved arrow; reduced-motion and no-JavaScript states retain a
 non-overlapping static list without those decorative arrows.
 
+`/v7/` keeps v6's title, radial labels, timings, media, and fallback behavior. It replaces the
+four arrows with one decorative eight-point wind rose at the viewport center. The wind rose fades
+with the first label from 6190–6990 ms, remains visible after completion or an intro skip, and is
+hidden in static reduced-motion and no-JavaScript layouts.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot
