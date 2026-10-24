@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.13.0] - 2026-10-24
+
+### Added
+
+- A shareable `/v8/` comparison route with a central faceted ivory 16-point wind rose.
+
 ## [4.12.0] - 2026-10-24
 
 ### Changed
