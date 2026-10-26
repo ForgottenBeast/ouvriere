@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.13.2] - 2026-10-26
+
+### Fixed
+
+- Restored the exact `L’Ouvrière` title for V7 and V8.
+
 ## [4.13.1] - 2026-10-24
 
 ### Fixed
