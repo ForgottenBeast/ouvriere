@@ -118,7 +118,7 @@ test("v8 preserves v7's sequence and media for the reference compass", () => {
   assert.deepEqual(LANDING_VARIANTS.v7.windRoseIn, [6190, 6990]);
 });
 
-test("v7 and v8 use the requested visible Ouvrière hero title only", async () => {
+test("v7 and v8 use the requested visible L'Ouvrière hero title only", async () => {
   const hero = await readFile(
     new URL("../src/components/HeroVideo.astro", import.meta.url),
     "utf8"
@@ -126,7 +126,7 @@ test("v7 and v8 use the requested visible Ouvrière hero title only", async () =
 
   assert.match(
     hero,
-    /const heroTitle =\s+variant === "v7" \|\| variant === "v8" \? "Ouvrière" : "L'Ouvriere";/
+    /const heroTitle =\s+variant === "v7" \|\| variant === "v8" \? "L'Ouvrière" : "L'Ouvriere";/
   );
   assert.match(hero, /<h1>\{heroTitle\}<\/h1>/);
   assert.match(hero, /<section class="intro" aria-label=\{heroTitle\}>/);
