@@ -147,11 +147,14 @@ test("V9 typography proposals preserve the V9 presentation contract", async () =
     "utf8"
   );
   assert.match(hero, /"font-eb-garamond": variant === "v9a"/);
-  assert.match(hero, /"font-bodoni-moda": variant === "v9b"/);
+  assert.match(
+    hero,
+    /"font-bodoni-moda": variant === "v9b" \|\| variant === "v10"/
+  );
   assert.match(hero, /"font-marcellus": variant === "v9c"/);
   assert.match(
     hero,
-    /"font-pinyon-script": variant === "v9d" \|\| variant === "v10"/
+    /"font-pinyon-script": variant === "v9d"/
   );
   assert.match(hero, /font-family: "EB Garamond", Georgia, serif;/);
   assert.match(hero, /font-family: "Bodoni Moda", Georgia, serif;/);
