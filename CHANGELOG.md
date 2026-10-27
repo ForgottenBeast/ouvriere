@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.16.1] - 2026-10-27
+
+### Fixed
+
+- Matched the V10 music comparison typography to the V9b Bodoni Moda proposal.
+
 ## [4.16.0] - 2026-10-27
 
 ### Added
