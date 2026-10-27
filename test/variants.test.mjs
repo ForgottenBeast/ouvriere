@@ -153,6 +153,10 @@ test("v9 font proposals preserve the V9 presentation contract", async () => {
   assert.match(hero, /font-family: "Bodoni Moda", Georgia, serif;/);
   assert.match(hero, /font-family: "Marcellus", Georgia, serif;/);
   assert.match(hero, /\.font-marcellus \.quote \{\s+font-family: "Cormorant Garamond"/);
+  assert.match(
+    hero,
+    /\.radial-menu\.font-bodoni-moda\.is-enhanced \.menu ul \{\s+font-size: clamp\(1\.35rem, 3vw, 2rem\);/
+  );
 });
 
 test("v7 through v9 use the requested visible L'Ouvrière hero title only", async () => {
