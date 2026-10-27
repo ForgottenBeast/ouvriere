@@ -149,7 +149,10 @@ test("V9 typography proposals preserve the V9 presentation contract", async () =
   assert.match(hero, /"font-eb-garamond": variant === "v9a"/);
   assert.match(hero, /"font-bodoni-moda": variant === "v9b"/);
   assert.match(hero, /"font-marcellus": variant === "v9c"/);
-  assert.match(hero, /"font-pinyon-script": variant === "v9d"/);
+  assert.match(
+    hero,
+    /"font-pinyon-script": variant === "v9d" \|\| variant === "v10"/
+  );
   assert.match(hero, /font-family: "EB Garamond", Georgia, serif;/);
   assert.match(hero, /font-family: "Bodoni Moda", Georgia, serif;/);
   assert.match(hero, /font-family: "Marcellus", Georgia, serif;/);
@@ -166,6 +169,37 @@ test("V9 typography proposals preserve the V9 presentation contract", async () =
   );
 });
 
+test("V10 adds only an explicit, user-triggered music loop", async () => {
+  assert.deepEqual(LANDING_VARIANTS.v10.timeline, LANDING_VARIANTS.v9d.timeline);
+  assert.deepEqual(LANDING_VARIANTS.v10.menuItems, LANDING_VARIANTS.v9d.menuItems);
+  assert.equal(LANDING_VARIANTS.v10.poster, LANDING_VARIANTS.v9d.poster);
+  assert.equal(
+    LANDING_VARIANTS.v10.streamMp4Url,
+    LANDING_VARIANTS.v9d.streamMp4Url
+  );
+  assert.equal(LANDING_VARIANTS.v10.backgroundBlurPx, 0);
+  assert.equal(LANDING_VARIANTS.v10.audioSrc, "musique");
+  assert.equal("audioSrc" in LANDING_VARIANTS.v9d, false);
+
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+  const demo = await readFile(
+    new URL("../src/scripts/demo.ts", import.meta.url),
+    "utf8"
+  );
+  assert.match(hero, /data-demo-audio/);
+  assert.match(hero, /data-audio-toggle/);
+  assert.match(hero, /preload="none"/);
+  assert.match(hero, /Activer la musique/);
+  assert.match(demo, /audio\.volume = 0\.35/);
+  assert.match(demo, /audio\.play\(\)\.catch/);
+  assert.match(demo, /if \(audio\.error\) \{/);
+  assert.match(demo, /Musique indisponible/);
+  assert.doesNotMatch(demo, /localStorage|sessionStorage/);
+});
+
 test("v7 through v9 use the requested visible L'Ouvrière hero title only", async () => {
   const hero = await readFile(
     new URL("../src/components/HeroVideo.astro", import.meta.url),
@@ -174,7 +208,7 @@ test("v7 through v9 use the requested visible L'Ouvrière hero title only", asyn
 
   assert.match(
     hero,
-    /variant === "v9a" \|\|\s+variant === "v9b" \|\|\s+variant === "v9c" \|\|\s+variant === "v9d"\s+\?\s+"L'Ouvrière"\s+:\s+"L'Ouvriere";/
+    /variant === "v9a" \|\|\s+variant === "v9b" \|\|\s+variant === "v9c" \|\|\s+variant === "v9d" \|\|\s+variant === "v10"\s+\?\s+"L'Ouvrière"\s+:\s+"L'Ouvriere";/
   );
   assert.match(hero, /<h1>\{heroTitle\}<\/h1>/);
   assert.match(hero, /<section class="intro" aria-label=\{heroTitle\}>/);
@@ -188,7 +222,7 @@ test("v7 through v9 align desktop radial labels on the vertical radius", async (
 
   assert.match(
     hero,
-    /const hasEqualRadialLabelSpacing =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d";/
+    /const hasEqualRadialLabelSpacing =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10";/
   );
   assert.match(hero, /"equal-radial-label-spacing": hasEqualRadialLabelSpacing/);
   assert.match(
@@ -283,7 +317,7 @@ test("the radial menu binds each inert label and arrow to one timed item", async
 
   assert.match(
     hero,
-    /const isRadial =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d";/
+    /const isRadial =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10";/
   );
   assert.match(hero, /"radial-menu": isRadial/);
   assert.match(hero, /menuItems\.map\(\(item, index\)/);

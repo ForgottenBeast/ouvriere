@@ -80,6 +80,11 @@ Garamond italic. Legal and playback controls retain their system font.
 labels. Its quote and attribution remain in Cormorant Garamond because Pinyon Script has no
 bundled italic face; legal and playback controls retain their system font.
 
+`/v10/` retains v9d's presentation and adds a user-controlled looping music track. It starts
+off, uses a modest volume, and remains independent of video playback, the intro skip, motion
+preferences, and Save-Data. JavaScript replaces the native fallback audio controls with the
+French music toggle after initialization.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot

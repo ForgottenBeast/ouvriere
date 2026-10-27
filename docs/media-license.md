@@ -87,3 +87,8 @@ outside Git and is not redistributed by this repository. The matching fallback p
 aspect ratio. No third-party author or stock licence is asserted for this user-provided clip.
 Cloudflare Stream video ID `9f1cb85817b73966e4732bee3e14edcc` serves its 7.4-second,
 2,182,734-byte MP4 through the v5 comparison route.
+
+## User-provided V10 music
+
+`/v10/` uses `src/assets/audio/musique.mp3`, copied from the project user's supplied
+`musique.mp3`. No third-party author or licence is asserted for this user-provided track.
