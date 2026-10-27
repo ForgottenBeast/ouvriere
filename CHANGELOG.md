@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.16.0] - 2026-10-27
+
+### Added
+
+- A shareable `/v10/` manuscript comparison route with optional visitor-controlled looping music.
+
 ## [4.15.0] - 2026-10-27
 
 ### Added
