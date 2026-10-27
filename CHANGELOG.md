@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+## [4.14.0] - 2026-10-27
+
+### Added
+
+- Four shareable V9 wind-rose comparison routes with Cormorant, EB Garamond, Bodoni Moda, and Marcellus typography.
+
 ## [4.13.2] - 2026-10-26
 
 ### Fixed
