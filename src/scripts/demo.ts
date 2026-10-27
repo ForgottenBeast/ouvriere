@@ -11,6 +11,10 @@ const initialise = () => {
 
   const video = root.querySelector<HTMLVideoElement>("[data-demo-video]");
   const toggle = root.querySelector<HTMLButtonElement>("[data-video-toggle]");
+  const audio = root.querySelector<HTMLAudioElement>("[data-demo-audio]");
+  const audioToggle = root.querySelector<HTMLButtonElement>(
+    "[data-audio-toggle]"
+  );
   const skip = root.querySelector<HTMLButtonElement>("[data-intro-skip]");
   const menu = root.querySelector<HTMLElement>("[data-demo-menu]");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -29,6 +33,33 @@ const initialise = () => {
     const paused = video.paused;
     toggle.textContent = paused ? "Lire la vidéo" : "Mettre la vidéo en pause";
     toggle.setAttribute("aria-pressed", String(!paused));
+  };
+  const initialiseAudio = () => {
+    if (!audio || !audioToggle) return;
+    const setAudioControl = () => {
+      if (audio.error) {
+        audioToggle.disabled = true;
+        audioToggle.textContent = "Musique indisponible";
+        audioToggle.setAttribute("aria-pressed", "false");
+        return;
+      }
+      const playing = !audio.paused;
+      audioToggle.textContent = playing
+        ? "Couper la musique"
+        : "Activer la musique";
+      audioToggle.setAttribute("aria-pressed", String(playing));
+    };
+    audio.volume = 0.35;
+    audio.controls = false;
+    audio.hidden = true;
+    audioToggle.hidden = false;
+    audio.addEventListener("play", setAudioControl);
+    audio.addEventListener("pause", setAudioControl);
+    audio.addEventListener("error", setAudioControl);
+    audioToggle.addEventListener("click", () => {
+      if (audio.paused) audio.play().catch(() => setAudioControl());
+      else audio.pause();
+    });
   };
 
   const mediaAllowed = () =>
@@ -128,6 +159,7 @@ const initialise = () => {
     if (mediaAllowed()) attachVideo();
     else detachVideo();
   });
+  initialiseAudio();
   skip?.addEventListener("click", () => setFinalState(true));
   toggle?.addEventListener("click", () => {
     if (!video) return;

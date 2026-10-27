@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
+import musiqueAudio from "../assets/audio/musique.mp3";
 import { LANDING_VARIANTS, type LandingVariant } from "../config/variants";
 
 interface Props {
@@ -34,7 +35,8 @@ const isRadial =
   variant === "v9a" ||
   variant === "v9b" ||
   variant === "v9c" ||
-  variant === "v9d";
+  variant === "v9d" ||
+  variant === "v10";
 const hasEqualRadialLabelSpacing =
   variant === "v7" ||
   variant === "v8" ||
@@ -42,7 +44,8 @@ const hasEqualRadialLabelSpacing =
   variant === "v9a" ||
   variant === "v9b" ||
   variant === "v9c" ||
-  variant === "v9d";
+  variant === "v9d" ||
+  variant === "v10";
 const heroTitle =
   variant === "v7" ||
   variant === "v8" ||
@@ -50,7 +53,8 @@ const heroTitle =
   variant === "v9a" ||
   variant === "v9b" ||
   variant === "v9c" ||
-  variant === "v9d"
+  variant === "v9d" ||
+  variant === "v10"
     ? "L'Ouvrière"
     : "L'Ouvriere";
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
@@ -58,6 +62,10 @@ const menuItemStyle = ([start, end]: readonly [number, number]) =>
 const windRoseStyle =
   "windRoseIn" in variantConfig
     ? menuItemStyle(variantConfig.windRoseIn)
+    : undefined;
+const audioURL =
+  "audioSrc" in variantConfig && variantConfig.audioSrc === "musique"
+    ? musiqueAudio
     : undefined;
 const cardinalRotations = [0, 90, 180, 270];
 const diagonalRotations = [45, 135, 225, 315];
@@ -78,7 +86,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       "font-eb-garamond": variant === "v9a",
       "font-bodoni-moda": variant === "v9b",
       "font-marcellus": variant === "v9c",
-      "font-pinyon-script": variant === "v9d",
+      "font-pinyon-script": variant === "v9d" || variant === "v10",
     },
   ]}
   data-demo-root
@@ -232,7 +240,8 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
         variant === "v9a" ||
         variant === "v9b" ||
         variant === "v9c" ||
-        variant === "v9d") && (
+        variant === "v9d" ||
+        variant === "v10") && (
         <svg
           class="wind-rose reference-ring-compass"
           viewBox="0 0 120 120"
@@ -278,7 +287,30 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       >Passer l'introduction</button
     ><button type="button" data-video-toggle aria-hidden="true" tabindex="-1"
       >Lecture / pause de la vidéo</button
-    ><a id="mentions-trigger" href="#mentions">Mentions</a>
+    >
+    {
+      audioURL && (
+        <>
+          <audio
+            data-demo-audio
+            controls
+            loop
+            preload="none"
+            src={audioURL}
+            aria-label="Musique d'ambiance"
+          ></audio>
+          <button
+            type="button"
+            data-audio-toggle
+            aria-pressed="false"
+            hidden
+          >
+            Activer la musique
+          </button>
+        </>
+      )
+    }
+    <a id="mentions-trigger" href="#mentions">Mentions</a>
   </div>
   <aside
     id="mentions"

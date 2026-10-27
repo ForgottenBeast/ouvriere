@@ -52,7 +52,8 @@ export type LandingVariant =
   | "v9a"
   | "v9b"
   | "v9c"
-  | "v9d";
+  | "v9d"
+  | "v10";
 
 export const LANDING_VARIANTS = {
   v1: {
@@ -210,5 +211,18 @@ export const LANDING_VARIANTS = {
     backgroundBlurPx: 0,
     streamMp4Url:
       "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+  },
+  v10: {
+    id: "v10",
+    title: "L'Ouvriere — v10",
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: v7MenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+    audioSrc: "musique",
   },
 } as const;
