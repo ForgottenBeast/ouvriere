@@ -118,7 +118,48 @@ test("v8 preserves v7's sequence and media for the reference compass", () => {
   assert.deepEqual(LANDING_VARIANTS.v7.windRoseIn, [6190, 6990]);
 });
 
-test("v7 and v8 use the requested visible L'Ouvrière hero title only", async () => {
+test("v9 preserves v8's presentation contract for the ring compass", () => {
+  assert.deepEqual(LANDING_VARIANTS.v9.timeline, LANDING_VARIANTS.v8.timeline);
+  assert.deepEqual(LANDING_VARIANTS.v9.windRoseIn, [6190, 6990]);
+  assert.deepEqual(LANDING_VARIANTS.v9.menuItems, LANDING_VARIANTS.v8.menuItems);
+  assert.equal(LANDING_VARIANTS.v9.poster, LANDING_VARIANTS.v8.poster);
+  assert.equal(
+    LANDING_VARIANTS.v9.streamMp4Url,
+    LANDING_VARIANTS.v8.streamMp4Url
+  );
+  assert.equal(LANDING_VARIANTS.v9.backgroundBlurPx, 0);
+});
+
+test("v9 font proposals preserve the V9 presentation contract", async () => {
+  for (const variant of ["v9a", "v9b", "v9c"]) {
+    assert.deepEqual(LANDING_VARIANTS[variant].timeline, LANDING_VARIANTS.v9.timeline);
+    assert.deepEqual(LANDING_VARIANTS[variant].windRoseIn, [6190, 6990]);
+    assert.deepEqual(LANDING_VARIANTS[variant].menuItems, LANDING_VARIANTS.v9.menuItems);
+    assert.equal(LANDING_VARIANTS[variant].poster, LANDING_VARIANTS.v9.poster);
+    assert.equal(
+      LANDING_VARIANTS[variant].streamMp4Url,
+      LANDING_VARIANTS.v9.streamMp4Url
+    );
+  }
+
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+  assert.match(hero, /"font-eb-garamond": variant === "v9a"/);
+  assert.match(hero, /"font-bodoni-moda": variant === "v9b"/);
+  assert.match(hero, /"font-marcellus": variant === "v9c"/);
+  assert.match(hero, /font-family: "EB Garamond", Georgia, serif;/);
+  assert.match(hero, /font-family: "Bodoni Moda", Georgia, serif;/);
+  assert.match(hero, /font-family: "Marcellus", Georgia, serif;/);
+  assert.match(hero, /\.font-marcellus \.quote \{\s+font-family: "Cormorant Garamond"/);
+  assert.match(
+    hero,
+    /\.radial-menu\.font-bodoni-moda\.is-enhanced \.menu ul \{\s+font-size: clamp\(1\.35rem, 3vw, 2rem\);/
+  );
+});
+
+test("v7 through v9 use the requested visible L'Ouvrière hero title only", async () => {
   const hero = await readFile(
     new URL("../src/components/HeroVideo.astro", import.meta.url),
     "utf8"
@@ -126,13 +167,13 @@ test("v7 and v8 use the requested visible L'Ouvrière hero title only", async ()
 
   assert.match(
     hero,
-    /const heroTitle =\s+variant === "v7" \|\| variant === "v8" \? "L'Ouvrière" : "L'Ouvriere";/
+    /variant === "v9a" \|\|\s+variant === "v9b" \|\|\s+variant === "v9c"\s+\?\s+"L'Ouvrière"\s+:\s+"L'Ouvriere";/
   );
   assert.match(hero, /<h1>\{heroTitle\}<\/h1>/);
   assert.match(hero, /<section class="intro" aria-label=\{heroTitle\}>/);
 });
 
-test("v7 and v8 align desktop radial labels on the vertical radius", async () => {
+test("v7 through v9 align desktop radial labels on the vertical radius", async () => {
   const hero = await readFile(
     new URL("../src/components/HeroVideo.astro", import.meta.url),
     "utf8"
@@ -140,7 +181,7 @@ test("v7 and v8 align desktop radial labels on the vertical radius", async () =>
 
   assert.match(
     hero,
-    /const hasEqualRadialLabelSpacing = variant === "v7" \|\| variant === "v8";/
+    /const hasEqualRadialLabelSpacing =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c";/
   );
   assert.match(hero, /"equal-radial-label-spacing": hasEqualRadialLabelSpacing/);
   assert.match(
@@ -155,6 +196,21 @@ test("v7 and v8 align desktop radial labels on the vertical radius", async () =>
     hero,
     /\.equal-radial-label-spacing\.is-enhanced \.wind-rose \{\s+width: min\(clamp\(11\.25rem, 20vw, 17\.5rem\), calc\(min\(22vh, 15rem\) \* 1\.8\)\);/
   );
+});
+
+test("v9 renders the supplied-reference ring compass without changing v8", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(hero, /variant === "v9" \|\|/);
+  assert.match(hero, /class="wind-rose reference-ring-compass"/);
+  assert.match(hero, /class="reference-ring-compass-ring"/);
+  assert.match(hero, /reference-ring-compass-face-light/);
+  assert.match(hero, /reference-ring-compass-face-dark/);
+  assert.match(hero, /r="31"/);
+  assert.doesNotMatch(hero, /reference-ring-compass-letter/);
 });
 
 test("v8 renders a dotted cardinal reference compass without changing v7", async () => {
@@ -220,7 +276,7 @@ test("the radial menu binds each inert label and arrow to one timed item", async
 
   assert.match(
     hero,
-    /const isRadial = variant === "v6" \|\| variant === "v7" \|\| variant === "v8"/
+    /const isRadial =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c";/
   );
   assert.match(hero, /"radial-menu": isRadial/);
   assert.match(hero, /menuItems\.map\(\(item, index\)/);
