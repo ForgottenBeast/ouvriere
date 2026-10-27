@@ -47,7 +47,11 @@ export type LandingVariant =
   | "v5"
   | "v6"
   | "v7"
-  | "v8";
+  | "v8"
+  | "v9"
+  | "v9a"
+  | "v9b"
+  | "v9c";
 
 export const LANDING_VARIANTS = {
   v1: {
@@ -137,6 +141,54 @@ export const LANDING_VARIANTS = {
   v8: {
     id: "v8",
     title: "L'Ouvriere — v8",
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: v7MenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+  },
+  v9: {
+    id: "v9",
+    title: "L'Ouvriere — v9",
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: v7MenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+  },
+  v9a: {
+    id: "v9a",
+    title: "L'Ouvriere — v9a",
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: v7MenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+  },
+  v9b: {
+    id: "v9b",
+    title: "L'Ouvriere — v9b",
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: v7MenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+  },
+  v9c: {
+    id: "v9c",
+    title: "L'Ouvriere — v9c",
     timeline: v7Timeline,
     windRoseIn: [6190, 6990],
     menuItems: v7MenuItems,

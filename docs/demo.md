@@ -66,6 +66,16 @@ comparison scale while its vector-effect outline remains a 0.225 px decorative l
 ivory SVG of fine split needles and a small faceted hub. It remains decorative and follows the
 same 6190–6990 ms appearance and static fallback rules as v7's compass.
 
+`/v9/` preserves v8's media, timing, labels, and fallback behavior. Its separate ivory SVG
+adapts the supplied eight-point reference as four long split cardinal needles, four short
+diagonal facets, a fine central ring, and a small faceted hub. It remains decorative and uses
+the same 6190–6990 ms appearance as v8.
+
+`/v9a/`, `/v9b/`, and `/v9c/` retain v9's presentation while comparing locally hosted EB
+Garamond, Bodoni Moda, and Marcellus typography. The first two use their local italic face for
+the quote; Marcellus has no bundled italic face, so its quote uses the existing Cormorant
+Garamond italic. Legal and playback controls retain their system font.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot

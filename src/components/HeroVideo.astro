@@ -26,10 +26,30 @@ const defaultMenuItems = [
 ] as const;
 const menuItems =
   "menuItems" in variantConfig ? variantConfig.menuItems : defaultMenuItems;
-const isRadial = variant === "v6" || variant === "v7" || variant === "v8";
-const hasEqualRadialLabelSpacing = variant === "v7" || variant === "v8";
+const isRadial =
+  variant === "v6" ||
+  variant === "v7" ||
+  variant === "v8" ||
+  variant === "v9" ||
+  variant === "v9a" ||
+  variant === "v9b" ||
+  variant === "v9c";
+const hasEqualRadialLabelSpacing =
+  variant === "v7" ||
+  variant === "v8" ||
+  variant === "v9" ||
+  variant === "v9a" ||
+  variant === "v9b" ||
+  variant === "v9c";
 const heroTitle =
-  variant === "v7" || variant === "v8" ? "L'Ouvrière" : "L'Ouvriere";
+  variant === "v7" ||
+  variant === "v8" ||
+  variant === "v9" ||
+  variant === "v9a" ||
+  variant === "v9b" ||
+  variant === "v9c"
+    ? "L'Ouvrière"
+    : "L'Ouvriere";
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
   `--menu-item-start:${start}ms;--menu-item-duration:${end - start}ms;`;
 const windRoseStyle =
@@ -52,6 +72,9 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       "no-blur": variantConfig.backgroundBlurPx === 0,
       "radial-menu": isRadial,
       "equal-radial-label-spacing": hasEqualRadialLabelSpacing,
+      "font-eb-garamond": variant === "v9a",
+      "font-bodoni-moda": variant === "v9b",
+      "font-marcellus": variant === "v9c",
     },
   ]}
   data-demo-root
@@ -200,6 +223,50 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
         </svg>
       )
     }
+    {
+      (variant === "v9" ||
+        variant === "v9a" ||
+        variant === "v9b" ||
+        variant === "v9c") && (
+        <svg
+          class="wind-rose reference-ring-compass"
+          viewBox="0 0 120 120"
+          aria-hidden="true"
+          focusable="false"
+          style={windRoseStyle}
+        >
+          <circle class="reference-ring-compass-ring" cx="60" cy="60" r="31" />
+          {cardinalRotations.map(rotation => (
+            <g transform={`rotate(${rotation} 60 60)`}>
+              <polygon
+                class="reference-ring-compass-face-light"
+                points="60,6 60,60 57,54"
+              />
+              <polygon
+                class="reference-ring-compass-face-dark"
+                points="60,6 63,54 60,60"
+              />
+            </g>
+          ))}
+          {diagonalRotations.map(rotation => (
+            <g transform={`rotate(${rotation} 60 60)`}>
+              <polygon
+                class="reference-ring-compass-face-light"
+                points="60,36 60,60 57,55"
+              />
+              <polygon
+                class="reference-ring-compass-face-dark"
+                points="60,36 63,55 60,60"
+              />
+            </g>
+          ))}
+          <polygon
+            class="reference-ring-compass-hub"
+            points="60,56 64,60 60,64 56,60"
+          />
+        </svg>
+      )
+    }
   </section>
   <div class="controls">
     <button type="button" data-intro-skip aria-hidden="true" tabindex="-1"
@@ -249,6 +316,41 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     font-display: swap;
   }
   @font-face {
+    font-family: "EB Garamond";
+    src: url("../assets/fonts/eb-garamond/regular.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "EB Garamond";
+    src: url("../assets/fonts/eb-garamond/italic.woff2") format("woff2");
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Bodoni Moda";
+    src: url("../assets/fonts/bodoni-moda/regular.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Bodoni Moda";
+    src: url("../assets/fonts/bodoni-moda/italic.woff2") format("woff2");
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Marcellus";
+    src: url("../assets/fonts/marcellus/regular.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
     font-family: "Cormorant Garamond";
     src: url("../assets/fonts/CormorantGaramond-Latin-Italic-400.woff2")
       format("woff2");
@@ -287,6 +389,18 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     filter: none;
   }
   .nature-version {
+    font-family: "Cormorant Garamond", Georgia, serif;
+  }
+  .font-eb-garamond {
+    font-family: "EB Garamond", Georgia, serif;
+  }
+  .font-bodoni-moda {
+    font-family: "Bodoni Moda", Georgia, serif;
+  }
+  .font-marcellus {
+    font-family: "Marcellus", Georgia, serif;
+  }
+  .font-marcellus .quote {
     font-family: "Cormorant Garamond", Georgia, serif;
   }
   .video {
@@ -490,6 +604,22 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     fill: none;
   }
   .reference-compass-hub {
+    fill: rgba(255, 250, 240, 0.22);
+  }
+  .reference-ring-compass {
+    stroke: #fffaf0;
+    stroke-width: 0.72;
+  }
+  .reference-ring-compass-ring {
+    fill: none;
+  }
+  .reference-ring-compass-face-light {
+    fill: rgba(255, 250, 240, 0.12);
+  }
+  .reference-ring-compass-face-dark {
+    fill: rgba(255, 250, 240, 0.28);
+  }
+  .reference-ring-compass-hub {
     fill: rgba(255, 250, 240, 0.22);
   }
   .radial-menu.is-enhanced .wind-rose {
