@@ -33,21 +33,24 @@ const isRadial =
   variant === "v9" ||
   variant === "v9a" ||
   variant === "v9b" ||
-  variant === "v9c";
+  variant === "v9c" ||
+  variant === "v9d";
 const hasEqualRadialLabelSpacing =
   variant === "v7" ||
   variant === "v8" ||
   variant === "v9" ||
   variant === "v9a" ||
   variant === "v9b" ||
-  variant === "v9c";
+  variant === "v9c" ||
+  variant === "v9d";
 const heroTitle =
   variant === "v7" ||
   variant === "v8" ||
   variant === "v9" ||
   variant === "v9a" ||
   variant === "v9b" ||
-  variant === "v9c"
+  variant === "v9c" ||
+  variant === "v9d"
     ? "L'Ouvrière"
     : "L'Ouvriere";
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
@@ -75,6 +78,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       "font-eb-garamond": variant === "v9a",
       "font-bodoni-moda": variant === "v9b",
       "font-marcellus": variant === "v9c",
+      "font-pinyon-script": variant === "v9d",
     },
   ]}
   data-demo-root
@@ -227,7 +231,8 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       (variant === "v9" ||
         variant === "v9a" ||
         variant === "v9b" ||
-        variant === "v9c") && (
+        variant === "v9c" ||
+        variant === "v9d") && (
         <svg
           class="wind-rose reference-ring-compass"
           viewBox="0 0 120 120"
@@ -351,6 +356,13 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     font-display: swap;
   }
   @font-face {
+    font-family: "Pinyon Script";
+    src: url("../assets/fonts/pinyon-script/regular.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
     font-family: "Cormorant Garamond";
     src: url("../assets/fonts/CormorantGaramond-Latin-Italic-400.woff2")
       format("woff2");
@@ -404,6 +416,17 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     font-family: "Marcellus", Georgia, serif;
   }
   .font-marcellus .quote {
+    font-family: "Cormorant Garamond", Georgia, serif;
+  }
+  .font-pinyon-script {
+    font-family: "Pinyon Script", "Cormorant Garamond", cursive;
+  }
+  .font-pinyon-script h1,
+  .font-pinyon-script .menu-item > span {
+    letter-spacing: normal;
+  }
+  .font-pinyon-script .quote,
+  .font-pinyon-script .attribution {
     font-family: "Cormorant Garamond", Georgia, serif;
   }
   .video {

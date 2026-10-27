@@ -51,7 +51,8 @@ export type LandingVariant =
   | "v9"
   | "v9a"
   | "v9b"
-  | "v9c";
+  | "v9c"
+  | "v9d";
 
 export const LANDING_VARIANTS = {
   v1: {
@@ -189,6 +190,18 @@ export const LANDING_VARIANTS = {
   v9c: {
     id: "v9c",
     title: "L'Ouvriere — v9c",
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: v7MenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+  },
+  v9d: {
+    id: "v9d",
+    title: "L'Ouvriere — v9d",
     timeline: v7Timeline,
     windRoseIn: [6190, 6990],
     menuItems: v7MenuItems,

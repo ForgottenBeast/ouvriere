@@ -76,6 +76,10 @@ Garamond, Bodoni Moda, and Marcellus typography. The first two use their local i
 the quote; Marcellus has no bundled italic face, so its quote uses the existing Cormorant
 Garamond italic. Legal and playback controls retain their system font.
 
+`/v9d/` retains v9's presentation with locally hosted Pinyon Script for the heading and radial
+labels. Its quote and attribution remain in Cormorant Garamond because Pinyon Script has no
+bundled italic face; legal and playback controls retain their system font.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot
