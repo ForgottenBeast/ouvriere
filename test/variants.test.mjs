@@ -149,7 +149,7 @@ test("V9 typography proposals preserve the V9 presentation contract", async () =
   assert.match(hero, /"font-eb-garamond": variant === "v9a"/);
   assert.match(
     hero,
-    /"font-bodoni-moda": variant === "v9b" \|\| variant === "v10"/
+    /"font-bodoni-moda":\s+variant === "v9b" \|\| variant === "v10" \|\| variant === "v11"/
   );
   assert.match(hero, /"font-marcellus": variant === "v9c"/);
   assert.match(
@@ -211,7 +211,7 @@ test("v7 through v9 use the requested visible L'Ouvrière hero title only", asyn
 
   assert.match(
     hero,
-    /variant === "v9a" \|\|\s+variant === "v9b" \|\|\s+variant === "v9c" \|\|\s+variant === "v9d" \|\|\s+variant === "v10"\s+\?\s+"L'Ouvrière"\s+:\s+"L'Ouvriere";/
+    /variant === "v9a" \|\|\s+variant === "v9b" \|\|\s+variant === "v9c" \|\|\s+variant === "v9d" \|\|\s+variant === "v10" \|\|\s+variant === "v11"\s+\?\s+"L'Ouvrière"\s+:\s+"L'Ouvriere";/
   );
   assert.match(hero, /<h1>\{heroTitle\}<\/h1>/);
   assert.match(hero, /<section class="intro" aria-label=\{heroTitle\}>/);
@@ -225,7 +225,7 @@ test("v7 through v9 align desktop radial labels on the vertical radius", async (
 
   assert.match(
     hero,
-    /const hasEqualRadialLabelSpacing =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10";/
+    /const hasEqualRadialLabelSpacing =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10" \|\|[\s\S]*variant === "v11";/
   );
   assert.match(hero, /"equal-radial-label-spacing": hasEqualRadialLabelSpacing/);
   assert.match(
@@ -320,7 +320,7 @@ test("the radial menu binds each inert label and arrow to one timed item", async
 
   assert.match(
     hero,
-    /const isRadial =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10";/
+    /const isRadial =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10" \|\|[\s\S]*variant === "v11";/
   );
   assert.match(hero, /"radial-menu": isRadial/);
   assert.match(hero, /menuItems\.map\(\(item, index\)/);
@@ -363,4 +363,25 @@ test("v4 disables both background blur mechanisms without changing text animatio
   assert.match(hero, /\.landing\.no-blur\.is-enhanced \.poster,/);
   assert.match(hero, /animation: none;/);
   assert.match(hero, /\[data-demo-root\]\.is-enhanced h1/);
+});
+
+test("V11 adds a Déguster menu panel that cross-fades over the same media", async () => {
+  for (const key of ["timeline", "menuItems", "poster", "streamMp4Url", "audioSrc"]) {
+    assert.deepEqual(LANDING_VARIANTS.v11[key], LANDING_VARIANTS.v10[key]);
+  }
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+  const demo = await readFile(
+    new URL("../src/scripts/demo.ts", import.meta.url),
+    "utf8"
+  );
+  assert.match(hero, /href="#carte"[\s\S]*data-open-carte/);
+  assert.match(hero, /3 Vagues & Mignardises — 55/);
+  assert.match(hero, /7 Vagues & Mignardises — 110/);
+  assert.match(hero, /Chariot de Fromages Affinés — 14/);
+  assert.match(hero, /--carte-step: 625ms/);
+  assert.match(demo, /is-carte-open/);
+  assert.doesNotMatch(demo, /video\.(pause|load)\(\)[\s\S]{0,40}carte/);
 });

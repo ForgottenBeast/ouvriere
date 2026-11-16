@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The entries
 
 ## [Unreleased]
 
+### Added
+
+- A `/v11/` comparison route where `Déguster` fades the radial menu into the tasting menu panel over the unchanged background video.
+
 ## [4.16.1] - 2026-10-27
 
 ### Fixed

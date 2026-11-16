@@ -47,6 +47,7 @@ test("provides explicit comparison and chooser routes", () => {
     "src/pages/v9c/index.astro",
     "src/pages/v9d/index.astro",
     "src/pages/v10/index.astro",
+    "src/pages/v11/index.astro",
     "src/pages/versions/index.astro",
   ]) {
     assert.equal(existsSync(route), true, `${route} must be published`);

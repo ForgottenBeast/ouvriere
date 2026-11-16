@@ -85,6 +85,13 @@ music track. It starts off, uses a modest volume, and remains independent of vid
 intro skip, motion preferences, and Save-Data. JavaScript replaces the native fallback audio
 controls with the French music toggle after initialization.
 
+`/v11/` keeps v10's media, timings, Bodoni Moda typography and music toggle, and makes the
+`Déguster` label a link. On click, the compass and radial labels fade out over 800 ms while the
+background video keeps playing and the scrim darkens slightly; the tasting menu (Rivage, Grand
+Large, Pleine Mer, Pâturage, transcribed from `480.jpeg`) then fades in top to bottom, one block
+every 625 ms with 800 ms fades, matching the radial label cadence. `Retour` or Escape reverses
+the transition. Without JavaScript the link targets `#carte`, which shows the panel directly.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot

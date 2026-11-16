@@ -17,6 +17,10 @@ const initialise = () => {
   );
   const skip = root.querySelector<HTMLButtonElement>("[data-intro-skip]");
   const menu = root.querySelector<HTMLElement>("[data-demo-menu]");
+  const carte = root.querySelector<HTMLElement>("[data-demo-carte]");
+  const openCarte = root.querySelector<HTMLAnchorElement>("[data-open-carte]");
+  const closeCarte =
+    root.querySelector<HTMLAnchorElement>("[data-close-carte]");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const connection = (
     navigator as Navigator & { connection?: NavigatorConnection }
@@ -160,6 +164,24 @@ const initialise = () => {
     else detachVideo();
   });
   initialiseAudio();
+  const setCarte = (open: boolean) => {
+    if (!carte) return;
+    if (open) setFinalState();
+    root.classList.toggle("is-carte-open", open);
+    if (open) carte.focus({ preventScroll: true });
+    else openCarte?.focus();
+  };
+  openCarte?.addEventListener("click", event => {
+    event.preventDefault();
+    setCarte(true);
+  });
+  closeCarte?.addEventListener("click", event => {
+    event.preventDefault();
+    setCarte(false);
+  });
+  carte?.addEventListener("keydown", event => {
+    if (event.key === "Escape") setCarte(false);
+  });
   skip?.addEventListener("click", () => setFinalState(true));
   toggle?.addEventListener("click", () => {
     if (!video) return;

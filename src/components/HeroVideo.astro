@@ -36,7 +36,8 @@ const isRadial =
   variant === "v9b" ||
   variant === "v9c" ||
   variant === "v9d" ||
-  variant === "v10";
+  variant === "v10" ||
+  variant === "v11";
 const hasEqualRadialLabelSpacing =
   variant === "v7" ||
   variant === "v8" ||
@@ -45,7 +46,42 @@ const hasEqualRadialLabelSpacing =
   variant === "v9b" ||
   variant === "v9c" ||
   variant === "v9d" ||
-  variant === "v10";
+  variant === "v10" ||
+  variant === "v11";
+const hasCarte = variant === "v11";
+const carteBlocks = [
+  {
+    title: "Rivage",
+    note: "Au déjeuner - Hors Week-end & fériés",
+    lines: [
+      "3 Vagues & Mignardises — 55",
+      "Accord Mets & Vins — 20",
+      "Accord Mets & Thés — 14",
+    ],
+  },
+  {
+    title: "Grand Large",
+    lines: [
+      "5 Vagues & Mignardises — 79",
+      "Accord Mets & Vins — 48",
+      "Accord Mets & Thés — 27",
+    ],
+  },
+  {
+    title: "Pleine Mer",
+    lines: [
+      "7 Vagues & Mignardises — 110",
+      "Accord Mets & Vins — 65",
+      "Accord Mets & Thés — 39",
+    ],
+  },
+  {
+    title: "Pâturage",
+    lines: ["Chariot de Fromages Affinés — 14"],
+    note: "En Supplément de Votre Menu - Tarif par Personne",
+  },
+] as const;
+const carteStyle = (index: number) => `--carte-index:${index};`;
 const heroTitle =
   variant === "v7" ||
   variant === "v8" ||
@@ -54,7 +90,8 @@ const heroTitle =
   variant === "v9b" ||
   variant === "v9c" ||
   variant === "v9d" ||
-  variant === "v10"
+  variant === "v10" ||
+  variant === "v11"
     ? "L'Ouvrière"
     : "L'Ouvriere";
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
@@ -82,9 +119,11 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       "nature-version": variant !== "v1",
       "no-blur": variantConfig.backgroundBlurPx === 0,
       "radial-menu": isRadial,
+      "has-carte": hasCarte,
       "equal-radial-label-spacing": hasEqualRadialLabelSpacing,
       "font-eb-garamond": variant === "v9a",
-      "font-bodoni-moda": variant === "v9b" || variant === "v10",
+      "font-bodoni-moda":
+        variant === "v9b" || variant === "v10" || variant === "v11",
       "font-marcellus": variant === "v9c",
       "font-pinyon-script": variant === "v9d",
     },
@@ -149,7 +188,15 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
                 <path d="m52 19 11-2-4 10" />
               </svg>
             )}
-            <span>{item.label}</span>
+            {hasCarte && item.label === "Déguster" ? (
+              <span>
+                <a class="menu-link" href="#carte" data-open-carte>
+                  {item.label}
+                </a>
+              </span>
+            ) : (
+              <span>{item.label}</span>
+            )}
           </li>
         ))
       }
@@ -241,7 +288,8 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
         variant === "v9b" ||
         variant === "v9c" ||
         variant === "v9d" ||
-        variant === "v10") && (
+        variant === "v10" ||
+        variant === "v11") && (
         <svg
           class="wind-rose reference-ring-compass"
           viewBox="0 0 120 120"
@@ -282,6 +330,46 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       )
     }
   </section>
+  {
+    hasCarte && (
+      <section
+        id="carte"
+        class="carte"
+        data-demo-carte
+        tabindex="-1"
+        aria-label="Menus dégustation"
+      >
+        <div class="carte-inner">
+          <a class="carte-back" href="#" data-close-carte>
+            Retour
+          </a>
+          <p class="carte-lead" style={carteStyle(0)}>
+            Élaboration du papier de notre menu à base d'algues marines, dans le
+            respect de notre identité culinaire
+          </p>
+          {carteBlocks.map((block, index) => (
+            <div class="carte-block" style={carteStyle(index + 1)}>
+              <h2>{block.title}</h2>
+              {"note" in block && block.title === "Rivage" && (
+                <p class="carte-note">({block.note})</p>
+              )}
+              <ul>
+                {block.lines.map(line => (
+                  <li>{line}</li>
+                ))}
+              </ul>
+              {"note" in block && block.title !== "Rivage" && (
+                <p class="carte-note">{block.note}</p>
+              )}
+            </div>
+          ))}
+          <p class="carte-note carte-foot" style={carteStyle(5)}>
+            Prix en Euros - Nets TTC - Service Compris
+          </p>
+        </div>
+      </section>
+    )
+  }
   <div class="controls">
     <button type="button" data-intro-skip aria-hidden="true" tabindex="-1"
       >Passer l'introduction</button
@@ -298,13 +386,8 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
             preload="none"
             src={audioURL}
             aria-label="Musique d'ambiance"
-          ></audio>
-          <button
-            type="button"
-            data-audio-toggle
-            aria-pressed="false"
-            hidden
-          >
+          />
+          <button type="button" data-audio-toggle aria-pressed="false" hidden>
             Activer la musique
           </button>
         </>
@@ -686,6 +769,122 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   }
   .radial-menu:not(.is-enhanced) .wind-rose {
     display: none;
+  }
+  .menu-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .menu-link:hover {
+    text-decoration: underline;
+  }
+  .carte {
+    --carte-step: 625ms;
+    --carte-fade: 800ms;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow-y: auto;
+    visibility: hidden;
+    pointer-events: none;
+    display: grid;
+    justify-items: center;
+    padding: clamp(1rem, 3vh, 2rem) 1.5rem;
+    text-align: center;
+  }
+  .carte-inner {
+    width: min(100%, 38rem);
+    margin: auto 0;
+  }
+  .carte-inner > * {
+    opacity: 0;
+    transition: opacity var(--carte-fade) ease;
+  }
+  .carte-lead,
+  .carte-note {
+    margin: 0;
+    font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .carte-block {
+    margin-top: clamp(0.9rem, 3vh, 2rem);
+  }
+  .carte-block h2 {
+    margin: 0 0 0.3rem;
+    font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+    font-weight: 400;
+    line-height: 1.1;
+  }
+  .carte-block ul {
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+    line-height: 1.5;
+  }
+  .carte-foot {
+    margin-top: clamp(0.9rem, 3vh, 2rem);
+  }
+  .carte-back {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    color: inherit;
+    font-size: clamp(1rem, 1.9vw, 1.3rem);
+    text-decoration: none;
+  }
+  .carte-back:hover,
+  .carte-back:focus-visible {
+    text-decoration: underline;
+  }
+  .carte:target {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .carte:target .carte-inner > * {
+    opacity: 1;
+  }
+  .landing .scrim {
+    transition: background-color var(--carte-fade, 800ms) ease;
+  }
+  [data-demo-root].is-carte-open .scrim {
+    background: rgba(5, 15, 20, 0.58);
+  }
+  [data-demo-root].has-carte.is-complete .menu li,
+  [data-demo-root].has-carte.is-complete .wind-rose {
+    transition: opacity 800ms ease 800ms;
+  }
+  [data-demo-root].has-carte.is-carte-open.is-complete .menu li,
+  [data-demo-root].has-carte.is-carte-open.is-complete .wind-rose {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 800ms ease;
+  }
+  .carte {
+    transition: visibility 0s 800ms;
+  }
+  [data-demo-root].is-carte-open .carte {
+    visibility: visible;
+    pointer-events: auto;
+    transition: visibility 0s;
+  }
+  [data-demo-root].is-carte-open .carte-inner > * {
+    opacity: 1;
+    transition-delay: calc(800ms + var(--carte-index, 0) * var(--carte-step));
+  }
+  [data-demo-root].is-carte-open .carte-back {
+    transition-delay: 800ms;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .carte-inner > *,
+    .landing .scrim,
+    [data-demo-root].has-carte.is-complete .menu li,
+    [data-demo-root].has-carte.is-complete .wind-rose {
+      transition: none;
+    }
+    [data-demo-root].is-carte-open .carte-inner > * {
+      transition-delay: 0s;
+    }
   }
   .controls {
     position: absolute;
