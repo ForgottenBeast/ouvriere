@@ -90,5 +90,5 @@ Cloudflare Stream video ID `9f1cb85817b73966e4732bee3e14edcc` serves its 7.4-sec
 
 ## User-provided V10 music
 
-`/v10/` uses `src/assets/audio/musique.mp3`, copied from the project user's supplied
+`/v10/` and `/v11/` use `src/assets/audio/musique.mp3`, copied from the project user's supplied
 `musique.mp3`. No third-party author or licence is asserted for this user-provided track.
