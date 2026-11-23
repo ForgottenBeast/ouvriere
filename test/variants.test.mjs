@@ -365,6 +365,17 @@ test("v4 disables both background blur mechanisms without changing text animatio
   assert.match(hero, /\[data-demo-root\]\.is-enhanced h1/);
 });
 
+test("V11 removes the seaweed-paper introductory sentence", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+  assert.doesNotMatch(
+    hero,
+    /Élaboration du papier de notre menu à base d'algues marines/
+  );
+});
+
 test("V11 adds a Déguster menu panel that cross-fades over the same media", async () => {
   for (const key of ["timeline", "menuItems", "poster", "streamMp4Url", "audioSrc"]) {
     assert.deepEqual(LANDING_VARIANTS.v11[key], LANDING_VARIANTS.v10[key]);

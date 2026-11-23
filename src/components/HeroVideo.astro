@@ -343,10 +343,6 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
           <a class="carte-back" href="#" data-close-carte>
             Retour
           </a>
-          <p class="carte-lead" style={carteStyle(0)}>
-            Élaboration du papier de notre menu à base d'algues marines, dans le
-            respect de notre identité culinaire
-          </p>
           {carteBlocks.map((block, index) => (
             <div class="carte-block" style={carteStyle(index + 1)}>
               <h2>{block.title}</h2>
