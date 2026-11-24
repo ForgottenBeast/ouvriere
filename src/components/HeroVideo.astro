@@ -54,30 +54,30 @@ const carteBlocks = [
     title: "Rivage",
     note: "Au déjeuner - Hors Week-end & fériés",
     lines: [
-      "3 Vagues & Mignardises — 55",
-      "Accord Mets & Vins — 20",
-      "Accord Mets & Thés — 14",
+      "3 Vagues & Mignardises",
+      "Accord Mets & Vins",
+      "Accord Mets & Thés",
     ],
   },
   {
     title: "Grand Large",
     lines: [
-      "5 Vagues & Mignardises — 79",
-      "Accord Mets & Vins — 48",
-      "Accord Mets & Thés — 27",
+      "5 Vagues & Mignardises",
+      "Accord Mets & Vins",
+      "Accord Mets & Thés",
     ],
   },
   {
     title: "Pleine Mer",
     lines: [
-      "7 Vagues & Mignardises — 110",
-      "Accord Mets & Vins — 65",
-      "Accord Mets & Thés — 39",
+      "7 Vagues & Mignardises",
+      "Accord Mets & Vins",
+      "Accord Mets & Thés",
     ],
   },
   {
     title: "Pâturage",
-    lines: ["Chariot de Fromages Affinés — 14"],
+    lines: ["Chariot de Fromages Affinés"],
     note: "En Supplément de Votre Menu - Tarif par Personne",
   },
 ] as const;
@@ -359,9 +359,6 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
               )}
             </div>
           ))}
-          <p class="carte-note carte-foot" style={carteStyle(5)}>
-            Prix en Euros - Nets TTC - Service Compris
-          </p>
         </div>
       </section>
     )

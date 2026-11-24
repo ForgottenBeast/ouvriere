@@ -389,10 +389,42 @@ test("V11 adds a Déguster menu panel that cross-fades over the same media", asy
     "utf8"
   );
   assert.match(hero, /href="#carte"[\s\S]*data-open-carte/);
-  assert.match(hero, /3 Vagues & Mignardises — 55/);
-  assert.match(hero, /7 Vagues & Mignardises — 110/);
-  assert.match(hero, /Chariot de Fromages Affinés — 14/);
+  assert.match(hero, /3 Vagues & Mignardises/);
+  assert.match(hero, /7 Vagues & Mignardises/);
+  assert.match(hero, /Chariot de Fromages Affinés/);
   assert.match(hero, /--carte-step: 625ms/);
   assert.match(demo, /is-carte-open/);
   assert.doesNotMatch(demo, /video\.(pause|load)\(\)[\s\S]{0,40}carte/);
+});
+
+test("V11 carte menu items carry no numeric price suffixes or dashes", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+  // No "— 55" / "— 110" style numeric price suffixes anywhere in the carte blocks.
+  assert.doesNotMatch(hero, /— \d+/);
+  // The per-person rate label is wording, not a numeric price footer: keep it.
+  assert.match(hero, /Tarif par Personne/);
+  // Menu names and descriptions survive without their price suffixes.
+  assert.match(hero, /3 Vagues & Mignardises/);
+  assert.match(hero, /Accord Mets & Vins/);
+  assert.match(hero, /Accord Mets & Thés/);
+  assert.match(hero, /5 Vagues & Mignardises/);
+  assert.match(hero, /7 Vagues & Mignardises/);
+  assert.match(hero, /Chariot de Fromages Affinés/);
+  assert.match(hero, /Rivage/);
+  assert.match(hero, /Grand Large/);
+  assert.match(hero, /Pleine Mer/);
+  assert.match(hero, /Pâturage/);
+});
+
+test("V11 carte footer carries no price disclosure line", async () => {
+  const hero = await readFile(
+    new URL("../src/components/HeroVideo.astro", import.meta.url),
+    "utf8"
+  );
+  assert.doesNotMatch(hero, /Prix en Euros/);
+  assert.doesNotMatch(hero, /Nets TTC/);
+  assert.doesNotMatch(hero, /Service Compris/);
 });
