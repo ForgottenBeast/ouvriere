@@ -92,6 +92,15 @@ Large, Pleine Mer, Pâturage, transcribed from `480.jpeg`) then fades in top to 
 every 625 ms with 800 ms fades, matching the radial label cadence. `Retour` or Escape reverses
 the transition. Without JavaScript the link targets `#carte`, which shows the panel directly.
 
+`/v12/` keeps v11's structure but swaps the background video behind a fade-to-black overlay.
+On `Déguster` open or `Retour` / Escape close it loads the user-provided Pexels ocean loop
+(`https://videos.pexels.com/video-files/30474577/13058534_1080_1920_60fps.mp4`) and plays that
+while the overlay fades in, then restores the Stream source and fades out. The transition uses
+a media load timeout, a 250 ms fade overlay, and a generation counter so rapid toggles cannot
+cross-switch sources. Reduced motion, Save-Data, autoplay rejection, and load timeouts retain
+the poster fallback. The v12 tasting menu drops the `Pâturage` supplement block and shows the
+original prices for Rivage, Grand Large, and Pleine Mer.
+
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
 background still reads as sea footage. Keep the blur clipped to the viewport so it cannot
