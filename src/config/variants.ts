@@ -54,7 +54,8 @@ export type LandingVariant =
   | "v9c"
   | "v9d"
   | "v10"
-  | "v11";
+  | "v11"
+  | "v12";
 
 export const LANDING_VARIANTS = {
   v1: {
@@ -238,5 +239,22 @@ export const LANDING_VARIANTS = {
     streamMp4Url:
       "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
     audioSrc: "musique",
+  },
+  v12: {
+    id: "v12",
+    title: "L'Ouvriere — v12",
+    timeline: v7Timeline,
+    windRoseIn: [6190, 6990],
+    menuItems: radialMenuItems,
+    mediaMode: "single",
+    poster: "ocean-v5",
+    backgroundBlurPx: 0,
+    streamMp4Url:
+      "https://videos.pexels.com/video-files/30474577/13058534_1080_1920_60fps.mp4",
+    priceFootnotes: {
+      rivage: "prix original",
+      grand_large: "prix original",
+      plein_mer: "prix original",
+    },
   },
 } as const;

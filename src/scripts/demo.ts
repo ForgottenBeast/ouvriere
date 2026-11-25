@@ -26,6 +26,9 @@ const initialise = () => {
     navigator as Navigator & { connection?: NavigatorConnection }
   ).connection;
   const videoSourceURL = root.dataset.videoSrc || streamMp4Url;
+  const variant = root.dataset.variant || "v1";
+  const pexelsVideoURL =
+    "https://videos.pexels.com/video-files/30474577/13058534_1080_1920_60fps.mp4";
   let mediaGeneration = 0;
   let finishTimer: number | undefined;
   const introCompletion =
@@ -171,16 +174,81 @@ const initialise = () => {
     if (open) carte.focus({ preventScroll: true });
     else openCarte?.focus();
   };
+
+  // Video source switching under opaque black.
+  // Open carte: fade to black, swap source, play, fade back.
+  // Close carte / Escape: fade to black, restore original source, play, fade back.
+  let transitionInFlight = false;
+
+  const swapVideoAndWait = (newSrc: string, onReady: () => void) => {
+    if (!video) return;
+    if (!canAttachVideo(newSrc, mediaAllowed())) {
+      onReady();
+      return;
+    }
+    mediaGeneration += 1;
+    const generation = mediaGeneration;
+    const sources = video.querySelectorAll("source");
+    sources.forEach(s => s.remove());
+    const newSource = document.createElement("source");
+    newSource.src = newSrc;
+    newSource.type = "video/mp4";
+    video.append(newSource);
+    video.load();
+    const settle = () => {
+      if (generation !== mediaGeneration) return;
+      video.removeEventListener("loadedmetadata", settle);
+      onReady();
+    };
+    video.addEventListener("loadedmetadata", settle);
+  };
+
+  // Fade to black, swap video, then fade back in and resume playback.
+  const switchVideoUnderBlack = (newSrc: string) => {
+    if (!video) return;
+    // Never fade to black when media is not allowed: the poster stays put.
+    if (!mediaAllowed()) return;
+    if (transitionInFlight) return;
+    transitionInFlight = true;
+
+    // 1. Fade scrim to opaque black while original still plays.
+    root.classList.add("is-black");
+
+    // 2. After black is visible, pause and swap.
+    video.pause();
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(guard);
+      video.play().catch(() => undefined);
+      root.classList.remove("is-black");
+      transitionInFlight = false;
+    };
+    // Safety net: if the new source never loads, clear the black cover so the
+    // UI is never stranded behind an opaque scrim.
+    const guard = window.setTimeout(finish, 5000);
+    swapVideoAndWait(newSrc, finish);
+  };
+
+  const restoreOriginalAndFade = () => {
+    switchVideoUnderBlack(videoSourceURL);
+  };
   openCarte?.addEventListener("click", event => {
     event.preventDefault();
     setCarte(true);
+    if (variant === "v12") switchVideoUnderBlack(pexelsVideoURL);
   });
   closeCarte?.addEventListener("click", event => {
     event.preventDefault();
     setCarte(false);
+    if (variant === "v12") restoreOriginalAndFade();
   });
   carte?.addEventListener("keydown", event => {
-    if (event.key === "Escape") setCarte(false);
+    if (event.key === "Escape") {
+      setCarte(false);
+      if (variant === "v12") restoreOriginalAndFade();
+    }
   });
   skip?.addEventListener("click", () => setFinalState(true));
   toggle?.addEventListener("click", () => {

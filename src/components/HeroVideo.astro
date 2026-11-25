@@ -48,11 +48,14 @@ const hasEqualRadialLabelSpacing =
   variant === "v9d" ||
   variant === "v10" ||
   variant === "v11";
-const hasCarte = variant === "v11";
+const hasCarte = variant === "v11" || variant === "v12";
 const carteBlocks = [
   {
     title: "Rivage",
-    note: "Au déjeuner - Hors Week-end & fériés",
+    note:
+      variant === "v12"
+        ? "Au déjeuner - Hors Week-end & fériés - Prix original"
+        : "Au déjeuner - Hors Week-end & fériés",
     lines: [
       "3 Vagues & Mignardises",
       "Accord Mets & Vins",
@@ -61,6 +64,7 @@ const carteBlocks = [
   },
   {
     title: "Grand Large",
+    note: variant === "v12" ? "Prix original" : undefined,
     lines: [
       "5 Vagues & Mignardises",
       "Accord Mets & Vins",
@@ -69,17 +73,22 @@ const carteBlocks = [
   },
   {
     title: "Pleine Mer",
+    note: variant === "v12" ? "Prix original" : undefined,
     lines: [
       "7 Vagues & Mignardises",
       "Accord Mets & Vins",
       "Accord Mets & Thés",
     ],
   },
-  {
-    title: "Pâturage",
-    lines: ["Chariot de Fromages Affinés"],
-    note: "En Supplément de Votre Menu - Tarif par Personne",
-  },
+  ...(variant === "v12"
+    ? []
+    : [
+        {
+          title: "Pâturage",
+          lines: ["Chariot de Fromages Affinés"],
+          note: "En Supplément de Votre Menu - Tarif par Personne",
+        },
+      ]),
 ] as const;
 const carteStyle = (index: number) => `--carte-index:${index};`;
 const heroTitle =
