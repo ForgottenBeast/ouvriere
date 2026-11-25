@@ -245,16 +245,14 @@ export const LANDING_VARIANTS = {
     title: "L'Ouvriere — v12",
     timeline: v7Timeline,
     windRoseIn: [6190, 6990],
-    menuItems: radialMenuItems,
+    menuItems: v7MenuItems,
     mediaMode: "single",
     poster: "ocean-v5",
     backgroundBlurPx: 0,
     streamMp4Url:
+      "https://customer-spsh21dx72idjxm3.cloudflarestream.com/9f1cb85817b73966e4732bee3e14edcc/downloads/default.mp4",
+    carteStreamMp4Url:
       "https://videos.pexels.com/video-files/30474577/13058534_1080_1920_60fps.mp4",
-    priceFootnotes: {
-      rivage: "prix original",
-      grand_large: "prix original",
-      plein_mer: "prix original",
-    },
+    audioSrc: "musique",
   },
 } as const;

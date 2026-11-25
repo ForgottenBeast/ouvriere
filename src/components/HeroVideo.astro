@@ -37,7 +37,8 @@ const isRadial =
   variant === "v9c" ||
   variant === "v9d" ||
   variant === "v10" ||
-  variant === "v11";
+  variant === "v11" ||
+  variant === "v12";
 const hasEqualRadialLabelSpacing =
   variant === "v7" ||
   variant === "v8" ||
@@ -47,37 +48,39 @@ const hasEqualRadialLabelSpacing =
   variant === "v9c" ||
   variant === "v9d" ||
   variant === "v10" ||
-  variant === "v11";
+  variant === "v11" ||
+  variant === "v12";
 const hasCarte = variant === "v11" || variant === "v12";
 const carteBlocks = [
   {
     title: "Rivage",
-    note:
-      variant === "v12"
-        ? "Au déjeuner - Hors Week-end & fériés - Prix original"
-        : "Au déjeuner - Hors Week-end & fériés",
+    note: "Au déjeuner - Hors Week-end & fériés",
     lines: [
-      "3 Vagues & Mignardises",
-      "Accord Mets & Vins",
-      "Accord Mets & Thés",
+      variant === "v12"
+        ? "3 Vagues & Mignardises — 55"
+        : "3 Vagues & Mignardises",
+      variant === "v12" ? "Accord Mets & Vins — 20" : "Accord Mets & Vins",
+      variant === "v12" ? "Accord Mets & Thés — 14" : "Accord Mets & Thés",
     ],
   },
   {
     title: "Grand Large",
-    note: variant === "v12" ? "Prix original" : undefined,
     lines: [
-      "5 Vagues & Mignardises",
-      "Accord Mets & Vins",
-      "Accord Mets & Thés",
+      variant === "v12"
+        ? "5 Vagues & Mignardises — 79"
+        : "5 Vagues & Mignardises",
+      variant === "v12" ? "Accord Mets & Vins — 48" : "Accord Mets & Vins",
+      variant === "v12" ? "Accord Mets & Thés — 27" : "Accord Mets & Thés",
     ],
   },
   {
     title: "Pleine Mer",
-    note: variant === "v12" ? "Prix original" : undefined,
     lines: [
-      "7 Vagues & Mignardises",
-      "Accord Mets & Vins",
-      "Accord Mets & Thés",
+      variant === "v12"
+        ? "7 Vagues & Mignardises — 110"
+        : "7 Vagues & Mignardises",
+      variant === "v12" ? "Accord Mets & Vins — 65" : "Accord Mets & Vins",
+      variant === "v12" ? "Accord Mets & Thés — 39" : "Accord Mets & Thés",
     ],
   },
   ...(variant === "v12"
@@ -100,7 +103,8 @@ const heroTitle =
   variant === "v9c" ||
   variant === "v9d" ||
   variant === "v10" ||
-  variant === "v11"
+  variant === "v11" ||
+  variant === "v12"
     ? "L'Ouvrière"
     : "L'Ouvriere";
 const menuItemStyle = ([start, end]: readonly [number, number]) =>
@@ -112,6 +116,10 @@ const windRoseStyle =
 const audioURL =
   "audioSrc" in variantConfig && variantConfig.audioSrc === "musique"
     ? musiqueAudio
+    : undefined;
+const carteVideoURL =
+  "carteStreamMp4Url" in variantConfig
+    ? variantConfig.carteStreamMp4Url
     : undefined;
 const cardinalRotations = [0, 90, 180, 270];
 const diagonalRotations = [45, 135, 225, 315];
@@ -132,7 +140,10 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       "equal-radial-label-spacing": hasEqualRadialLabelSpacing,
       "font-eb-garamond": variant === "v9a",
       "font-bodoni-moda":
-        variant === "v9b" || variant === "v10" || variant === "v11",
+        variant === "v9b" ||
+        variant === "v10" ||
+        variant === "v11" ||
+        variant === "v12",
       "font-marcellus": variant === "v9c",
       "font-pinyon-script": variant === "v9d",
     },
@@ -140,6 +151,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   data-demo-root
   data-demo-variant={variant}
   data-video-src={variantConfig.streamMp4Url}
+  data-carte-video-src={carteVideoURL}
   data-intro-completion={introCompletion}
   style={timelineStyle}
 >
@@ -162,6 +174,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
       poster={posterURL}></video>
   </div>
   <div class="scrim" aria-hidden="true"></div>
+  <div class="transition-overlay" aria-hidden="true"></div>
   <section class="intro" aria-label={heroTitle}>
     <div class="title-lock"><h1>{heroTitle}</h1></div>
     <div class="intro-copy">
@@ -298,7 +311,8 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
         variant === "v9c" ||
         variant === "v9d" ||
         variant === "v10" ||
-        variant === "v11") && (
+        variant === "v11" ||
+        variant === "v12") && (
         <svg
           class="wind-rose reference-ring-compass"
           viewBox="0 0 120 120"
@@ -553,6 +567,18 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   .scrim {
     z-index: -1;
     background: rgba(5, 15, 20, 0.34);
+  }
+  .transition-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 250ms ease;
+  }
+  .landing.is-black .transition-overlay {
+    opacity: 1;
   }
   .intro,
   .menu {

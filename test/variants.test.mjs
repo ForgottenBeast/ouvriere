@@ -149,7 +149,7 @@ test("V9 typography proposals preserve the V9 presentation contract", async () =
   assert.match(hero, /"font-eb-garamond": variant === "v9a"/);
   assert.match(
     hero,
-    /"font-bodoni-moda":\s+variant === "v9b" \|\| variant === "v10" \|\| variant === "v11"/
+    /"font-bodoni-moda":\s+variant === "v9b" \|\|\s+variant === "v10" \|\|\s+variant === "v11" \|\|\s+variant === "v12"/
   );
   assert.match(hero, /"font-marcellus": variant === "v9c"/);
   assert.match(
@@ -211,7 +211,7 @@ test("v7 through v9 use the requested visible L'Ouvrière hero title only", asyn
 
   assert.match(
     hero,
-    /variant === "v9a" \|\|\s+variant === "v9b" \|\|\s+variant === "v9c" \|\|\s+variant === "v9d" \|\|\s+variant === "v10" \|\|\s+variant === "v11"\s+\?\s+"L'Ouvrière"\s+:\s+"L'Ouvriere";/
+    /variant === "v9a" \|\|\s+variant === "v9b" \|\|\s+variant === "v9c" \|\|\s+variant === "v9d" \|\|\s+variant === "v10" \|\|\s+variant === "v11" \|\|\s+variant === "v12"\s+\?\s+"L'Ouvrière"\s+:\s+"L'Ouvriere";/
   );
   assert.match(hero, /<h1>\{heroTitle\}<\/h1>/);
   assert.match(hero, /<section class="intro" aria-label=\{heroTitle\}>/);
@@ -225,7 +225,7 @@ test("v7 through v9 align desktop radial labels on the vertical radius", async (
 
   assert.match(
     hero,
-    /const hasEqualRadialLabelSpacing =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10" \|\|[\s\S]*variant === "v11";/
+    /const hasEqualRadialLabelSpacing =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10" \|\|[\s\S]*variant === "v11" \|\|[\s\S]*variant === "v12";/
   );
   assert.match(hero, /"equal-radial-label-spacing": hasEqualRadialLabelSpacing/);
   assert.match(
@@ -320,7 +320,7 @@ test("the radial menu binds each inert label and arrow to one timed item", async
 
   assert.match(
     hero,
-    /const isRadial =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10" \|\|[\s\S]*variant === "v11";/
+    /const isRadial =[\s\S]*variant === "v9a" \|\|[\s\S]*variant === "v9b" \|\|[\s\S]*variant === "v9c" \|\|[\s\S]*variant === "v9d" \|\|[\s\S]*variant === "v10" \|\|[\s\S]*variant === "v11" \|\|[\s\S]*variant === "v12";/
   );
   assert.match(hero, /"radial-menu": isRadial/);
   assert.match(hero, /menuItems\.map\(\(item, index\)/);
@@ -397,16 +397,18 @@ test("V11 adds a Déguster menu panel that cross-fades over the same media", asy
   assert.doesNotMatch(demo, /video\.(pause|load)\(\)[\s\S]{0,40}carte/);
 });
 
-test("V11 carte menu items carry no numeric price suffixes or dashes", async () => {
+test("V11 carte menu items preserve the price-free presentation", async () => {
   const hero = await readFile(
     new URL("../src/components/HeroVideo.astro", import.meta.url),
     "utf8"
   );
-  // No "— 55" / "— 110" style numeric price suffixes anywhere in the carte blocks.
-  assert.doesNotMatch(hero, /— \d+/);
-  // The per-person rate label is wording, not a numeric price footer: keep it.
+  assert.match(hero, /variant === "v12"\s*\? \[\]/);
+  assert.match(
+    hero,
+    /variant === "v12"\s*\?\s*"3 Vagues & Mignardises — 55"/
+  );
   assert.match(hero, /Tarif par Personne/);
-  // Menu names and descriptions survive without their price suffixes.
+
   assert.match(hero, /3 Vagues & Mignardises/);
   assert.match(hero, /Accord Mets & Vins/);
   assert.match(hero, /Accord Mets & Thés/);
@@ -427,4 +429,60 @@ test("V11 carte footer carries no price disclosure line", async () => {
   assert.doesNotMatch(hero, /Prix en Euros/);
   assert.doesNotMatch(hero, /Nets TTC/);
   assert.doesNotMatch(hero, /Service Compris/);
+});
+
+test("V12 preserves V11's presentation and music while using its own carte and black media transition", async () => {
+  assert.deepEqual(LANDING_VARIANTS.v12.timeline, LANDING_VARIANTS.v11.timeline);
+  assert.deepEqual(LANDING_VARIANTS.v12.menuItems, LANDING_VARIANTS.v11.menuItems);
+  assert.equal(LANDING_VARIANTS.v12.poster, LANDING_VARIANTS.v11.poster);
+  assert.equal(LANDING_VARIANTS.v12.backgroundBlurPx, LANDING_VARIANTS.v11.backgroundBlurPx);
+  assert.equal(LANDING_VARIANTS.v12.audioSrc, "musique");
+  assert.equal(
+    LANDING_VARIANTS.v12.streamMp4Url,
+    LANDING_VARIANTS.v11.streamMp4Url
+  );
+
+  const [hero, demo, route] = await Promise.all([
+    readFile(new URL("../src/components/HeroVideo.astro", import.meta.url), "utf8"),
+    readFile(new URL("../src/scripts/demo.ts", import.meta.url), "utf8"),
+    readFile(new URL("../src/pages/v12/index.astro", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(route, /<LandingDemo variant="v12"\s*\/>/);
+  assert.match(hero, /variant === "v11" \|\| variant === "v12"/);
+  assert.match(hero, /variant === "v11" \|\| variant === "v12";/);
+  assert.match(
+    hero,
+    /"font-bodoni-moda":\s+variant === "v9b" \|\|\s+variant === "v10" \|\|\s+variant === "v11" \|\|\s+variant === "v12"/
+  );
+  assert.match(hero, /"radial-menu": isRadial/);
+  assert.match(hero, /\.landing\.is-black \.transition-overlay/);
+  assert.match(hero, /background: #000;/);
+  assert.match(hero, /transition: opacity 250ms ease;/);
+  assert.match(hero, /3 Vagues & Mignardises — 55/);
+  assert.match(hero, /Accord Mets & Vins — 20/);
+  assert.match(hero, /Accord Mets & Thés — 14/);
+  assert.match(hero, /5 Vagues & Mignardises — 79/);
+  assert.match(hero, /Accord Mets & Vins — 48/);
+  assert.match(hero, /Accord Mets & Thés — 27/);
+  assert.match(hero, /7 Vagues & Mignardises — 110/);
+  assert.match(hero, /Accord Mets & Vins — 65/);
+  assert.match(hero, /Accord Mets & Thés — 39/);
+  assert.doesNotMatch(hero, /Prix original/);
+  assert.match(hero, /variant === "v12"\s*\? \[\]\s*:/);
+
+  assert.match(demo, /root\.dataset\.demoVariant/);
+  assert.match(demo, /const BLACK_FADE_MS = 250/);
+  assert.match(demo, /window\.setTimeout\(swap, BLACK_FADE_MS\)/);
+  assert.match(demo, /loadeddata/);
+  assert.match(demo, /error/);
+  assert.match(
+    demo,
+    /window\.setTimeout\(\s*\(\) => settle\(false\),\s*VIDEO_LOAD_TIMEOUT_MS\s*\)/
+  );
+  assert.equal(
+    LANDING_VARIANTS.v12.carteStreamMp4Url,
+    "https://videos.pexels.com/video-files/30474577/13058534_1080_1920_60fps.mp4"
+  );
+  assert.match(demo, /carteVideoURL = root\.dataset\.carteVideoSrc/);
 });
