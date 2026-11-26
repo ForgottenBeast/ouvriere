@@ -597,6 +597,27 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   [data-demo-root].has-video .poster {
     opacity: 0;
   }
+  /* The incoming Pexels layer is hidden while it earns one second of playback. */
+  [data-demo-root].is-video-loop-prerolling:not(.is-loop-secondary-active)
+    .video-primary {
+    opacity: 1;
+    z-index: 1;
+  }
+  [data-demo-root].is-video-loop-prerolling:not(.is-loop-secondary-active)
+    .video-loop {
+    opacity: 0;
+    z-index: 0;
+  }
+  [data-demo-root].is-video-loop-prerolling.is-loop-secondary-active
+    .video-primary {
+    opacity: 0;
+    z-index: 0;
+  }
+  [data-demo-root].is-video-loop-prerolling.is-loop-secondary-active
+    .video-loop {
+    opacity: 1;
+    z-index: 1;
+  }
   /* Keep the outgoing frame opaque underneath one fading-in incoming layer. */
   [data-demo-root].is-video-loop-fading:not(.is-loop-secondary-active)
     .video-primary {

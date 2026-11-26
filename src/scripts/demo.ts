@@ -33,12 +33,17 @@ const initialise = () => {
   const carteVideoURL = root.dataset.carteVideoSrc;
   const BLACK_FADE_MS = 1000;
   const VIDEO_LOOP_FADE_MS = 1000;
+  const VIDEO_LOOP_PREROLL_MS = 1000;
   const VIDEO_LOAD_TIMEOUT_MS = 5000;
   let mediaGeneration = 0;
   let finishTimer: number | undefined;
   let activeVideo = video;
   let loopFadeEnabled = false;
   let loopFadeActive = false;
+  let loopPrerollActive = false;
+  let loopPrerollVideo: HTMLVideoElement | undefined;
+  let loopPrerollLastTime = 0;
+  let loopPrerollAdvanced = false;
   let loopMonitorTimer: number | undefined;
   const introCompletion =
     Number(root.dataset.introCompletion) ||
@@ -82,6 +87,8 @@ const initialise = () => {
     !reducedMotion.matches && connection?.saveData !== true;
   const detachVideo = () => {
     mediaGeneration += 1;
+    clearLoopPreroll();
+    clearLoopFade();
     if (!video) return;
     const toggleWasFocused = toggle === document.activeElement;
     [video, loopVideo].filter(Boolean).forEach(player => {
@@ -91,8 +98,7 @@ const initialise = () => {
     });
     activeVideo = video;
     loopFadeEnabled = false;
-    loopFadeActive = false;
-    root.classList.remove("is-video-loop-fading", "is-loop-secondary-active");
+    root.classList.remove("is-loop-secondary-active");
     const sources = video.querySelectorAll("source");
     if (sources.length === 0) {
       root.classList.remove("has-video");
@@ -202,6 +208,19 @@ const initialise = () => {
     root.classList.remove("is-video-loop-fading");
   };
 
+  const clearLoopPreroll = (pauseIncoming = true) => {
+    const incoming = loopPrerollVideo;
+    loopPrerollActive = false;
+    loopPrerollVideo = undefined;
+    loopPrerollLastTime = 0;
+    loopPrerollAdvanced = false;
+    root.classList.remove("is-video-loop-prerolling");
+    if (pauseIncoming && incoming && incoming !== activeVideo) {
+      incoming.pause();
+      incoming.currentTime = 0;
+    }
+  };
+
   const isLoopVideo = (player: HTMLVideoElement | null) =>
     Boolean(loopVideo && player === loopVideo);
 
@@ -212,10 +231,79 @@ const initialise = () => {
     outgoing.pause();
     outgoing.currentTime = 0;
     activeVideo = incoming;
+    clearLoopPreroll(false);
     clearLoopFade();
     root.classList.toggle("is-loop-secondary-active", isLoopVideo(activeVideo));
     setPlaybackControl();
     monitorPexelsLoop();
+  };
+
+  const restartActiveLoop = () => {
+    if (!activeVideo || activeVideo.paused) return;
+    clearLoopPreroll();
+    clearLoopFade();
+    activeVideo.currentTime = 0;
+    activeVideo.play().catch(() => detachVideo());
+  };
+
+  const startPexelsPreroll = () => {
+    if (
+      !video ||
+      !loopVideo ||
+      !loopFadeEnabled ||
+      loopFadeActive ||
+      !activeVideo ||
+      activeVideo.paused ||
+      !Number.isFinite(activeVideo.duration) ||
+      activeVideo.duration - activeVideo.currentTime >
+        (VIDEO_LOOP_PREROLL_MS + VIDEO_LOOP_FADE_MS) / 1000
+    )
+      return;
+    const incoming = activeVideo === video ? loopVideo : video;
+    if (loopPrerollActive && loopPrerollVideo === incoming) return;
+    clearLoopPreroll();
+    loopPrerollActive = true;
+    loopPrerollVideo = incoming;
+    root.classList.add("is-video-loop-prerolling");
+    const playIncoming = () => {
+      incoming
+        .play()
+        .then(() => {
+          if (
+            !loopFadeEnabled ||
+            incoming !== (activeVideo === video ? loopVideo : video) ||
+            incoming !== loopPrerollVideo
+          )
+            return;
+          monitorPexelsLoop();
+        })
+        .catch(() => detachVideo());
+    };
+    const playAfterReset = () => {
+      if (incoming !== loopPrerollVideo || incoming.currentTime > 0.1) return;
+      playIncoming();
+    };
+    if (incoming.currentTime > 0.1) {
+      incoming.addEventListener("seeked", playAfterReset, { once: true });
+      incoming.currentTime = 0;
+    } else {
+      incoming.currentTime = 0;
+      playIncoming();
+    }
+  };
+
+  const prerollIsAdvancing = (incoming: HTMLVideoElement) => {
+    const currentTime = incoming.currentTime;
+    if (currentTime > loopPrerollLastTime + 0.02) loopPrerollAdvanced = true;
+    loopPrerollLastTime = currentTime;
+    return (
+      loopPrerollActive &&
+      loopPrerollVideo === incoming &&
+      loopPrerollAdvanced &&
+      !incoming.paused &&
+      incoming.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+      currentTime >= VIDEO_LOOP_PREROLL_MS / 1000 - 0.1
+    );
   };
 
   const fadePexelsLoop = () => {
@@ -226,24 +314,21 @@ const initialise = () => {
       loopFadeActive ||
       !activeVideo ||
       activeVideo.paused ||
-      !Number.isFinite(activeVideo.duration) ||
-      activeVideo.duration - activeVideo.currentTime > VIDEO_LOOP_FADE_MS / 1000
+      !Number.isFinite(activeVideo.duration)
     )
       return;
+    const remaining = activeVideo.duration - activeVideo.currentTime;
+    if (remaining > (VIDEO_LOOP_PREROLL_MS + VIDEO_LOOP_FADE_MS) / 1000) return;
+    startPexelsPreroll();
+    if (remaining > VIDEO_LOOP_FADE_MS / 1000) return;
     const incoming = activeVideo === video ? loopVideo : video;
-    incoming.currentTime = 0;
-    incoming
-      .play()
-      .then(() => {
-        if (
-          !loopFadeEnabled ||
-          incoming !== (activeVideo === video ? loopVideo : video)
-        )
-          return;
-        loopFadeActive = true;
-        root.classList.add("is-video-loop-fading");
-      })
-      .catch(() => detachVideo());
+    if (!prerollIsAdvancing(incoming)) {
+      if (remaining <= 0.05) restartActiveLoop();
+      return;
+    }
+    loopFadeActive = true;
+    clearLoopPreroll(false);
+    root.classList.add("is-video-loop-fading");
   };
 
   const monitorPexelsLoop = () => {
@@ -264,6 +349,7 @@ const initialise = () => {
 
   const configureVideoLoop = (sourceURL: string) => {
     if (!video) return;
+    clearLoopPreroll();
     clearLoopFade();
     activeVideo = video;
     root.classList.remove("is-loop-secondary-active");
@@ -399,7 +485,9 @@ const initialise = () => {
   toggle?.addEventListener("click", () => {
     if (!activeVideo) return;
     const players =
-      loopFadeActive && video && loopVideo ? [video, loopVideo] : [activeVideo];
+      (loopFadeActive || loopPrerollActive) && video && loopVideo
+        ? [video, loopVideo]
+        : [activeVideo];
     if (activeVideo.paused)
       players.forEach(player => player.play().catch(() => undefined));
     else players.forEach(player => player.pause());
@@ -411,6 +499,7 @@ const initialise = () => {
     });
     player?.addEventListener("pause", () => {
       setPlaybackControl();
+      if (loopPrerollActive && player === activeVideo) clearLoopPreroll();
       if (loopFadeActive && player === activeVideo) {
         if (
           Number.isFinite(player.duration) &&
@@ -425,6 +514,7 @@ const initialise = () => {
     player?.addEventListener("loadedmetadata", monitorPexelsLoop);
     player?.addEventListener("seeked", monitorPexelsLoop);
     player?.addEventListener("timeupdate", () => {
+      if (player === loopPrerollVideo) prerollIsAdvancing(player);
       fadePexelsLoop();
       if (
         loopFadeActive &&
@@ -442,7 +532,10 @@ const initialise = () => {
       )
         settleLoop();
     });
-    player?.addEventListener("ended", settleLoop);
+    player?.addEventListener("ended", () => {
+      if (loopFadeActive) settleLoop();
+      else if (loopFadeEnabled && player === activeVideo) restartActiveLoop();
+    });
     player?.addEventListener("error", () => {
       if (player.querySelector("source")) detachVideo();
     });

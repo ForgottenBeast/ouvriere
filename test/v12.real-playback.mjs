@@ -133,6 +133,7 @@ test(
             opacities: players.map(player => Number(getComputedStyle(player).opacity)),
             zIndexes: players.map(player => getComputedStyle(player).zIndex),
             activeSecondary: root.classList.contains("is-loop-secondary-active"),
+            loopPrerolling: root.classList.contains("is-video-loop-prerolling"),
             loopFading: root.classList.contains("is-video-loop-fading"),
             overlayOpacity: Number(getComputedStyle(document.querySelector(".transition-overlay")).opacity),
             posterOpacity: Number(getComputedStyle(document.querySelector(".poster")).opacity),
@@ -194,19 +195,51 @@ test(
       const observeOverlap = async (activeIndex, expectedSecondary) => {
         await evaluate(`(() => {
           const players = [...document.querySelectorAll("[data-demo-video], [data-demo-video-loop]")];
-          players[${activeIndex}].currentTime = players[${activeIndex}].duration - 1.15;
+          const incomingIndex = ${activeIndex} === 0 ? 1 : 0;
+          players[incomingIndex].pause();
+          players[incomingIndex].currentTime = 0;
+          players[${activeIndex}].currentTime = players[${activeIndex}].duration - 2.05;
           return players[${activeIndex}].play();
         })()`);
+        const incomingIndex = activeIndex === 0 ? 1 : 0;
+        const outgoingIndex = activeIndex;
+        const prerollStarted = await waitFor(async () => {
+          const state = await videoState();
+          if (
+            !state.loopPrerolling ||
+            state.loopFading ||
+            state.currentTimes[incomingIndex] <= 0.05
+          )
+            throw new Error(JSON.stringify(state));
+          return state;
+        }, "Pexels loop did not begin hidden incoming playback");
+        await delay(150);
+        const prerollAdvancing = await videoState();
+        assert(
+          prerollAdvancing.loopPrerolling &&
+            !prerollAdvancing.loopFading &&
+            prerollAdvancing.currentTimes[incomingIndex] >
+              prerollStarted.currentTimes[incomingIndex] + 0.02,
+          JSON.stringify({ prerollStarted, prerollAdvancing })
+        );
+        assert(prerollAdvancing.opacities[outgoingIndex] > 0.999, JSON.stringify(prerollAdvancing));
         const started = await waitFor(async () => {
           const state = await videoState();
-          if (!state.loopFading || state.currentTimes[activeIndex] < state.durations[activeIndex] - 1.2)
+          if (
+            !state.loopFading ||
+            state.currentTimes[activeIndex] < state.durations[activeIndex] - 1.2
+          )
             throw new Error(JSON.stringify(state));
           return state;
         }, "Pexels loop did not begin a transparent overlap");
+        assert(
+          started.currentTimes[incomingIndex] >= 0.75 &&
+            started.currentTimes[incomingIndex] <= 1.35 &&
+            !started.paused[incomingIndex],
+          JSON.stringify(started)
+        );
         await delay(500);
         const midpoint = await videoState();
-        const incomingIndex = activeIndex === 0 ? 1 : 0;
-        const outgoingIndex = activeIndex;
         const compositedVideoAlpha =
           midpoint.opacities[incomingIndex] +
           midpoint.opacities[outgoingIndex] *
