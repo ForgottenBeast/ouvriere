@@ -578,32 +578,46 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     position: absolute;
     inset: 0;
     opacity: 1;
-    transition: opacity 1s linear;
   }
-  .video-loop,
+  .video-primary {
+    z-index: 1;
+  }
+  .video-loop {
+    opacity: 0;
+    z-index: 0;
+  }
   [data-demo-root].is-loop-secondary-active .video-primary {
     opacity: 0;
+    z-index: 0;
   }
   [data-demo-root].is-loop-secondary-active .video-loop {
     opacity: 1;
+    z-index: 1;
   }
   [data-demo-root].has-video .poster {
     opacity: 0;
   }
+  /* Keep the outgoing frame opaque underneath one fading-in incoming layer. */
   [data-demo-root].is-video-loop-fading:not(.is-loop-secondary-active)
     .video-primary {
-    opacity: 0;
+    opacity: 1;
+    z-index: 0;
   }
   [data-demo-root].is-video-loop-fading:not(.is-loop-secondary-active)
     .video-loop {
     opacity: 1;
+    z-index: 1;
+    transition: opacity 1s linear;
   }
   [data-demo-root].is-video-loop-fading.is-loop-secondary-active
     .video-primary {
     opacity: 1;
+    z-index: 1;
+    transition: opacity 1s linear;
   }
   [data-demo-root].is-video-loop-fading.is-loop-secondary-active .video-loop {
-    opacity: 0;
+    opacity: 1;
+    z-index: 0;
   }
   .scrim {
     z-index: -1;

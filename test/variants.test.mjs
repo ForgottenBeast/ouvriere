@@ -463,7 +463,35 @@ test("V12 preserves V11's presentation and music while using its own carte and b
   assert.match(hero, /data-demo-video-loop/);
   assert.match(hero, /class="video video-primary"/);
   assert.match(hero, /class="video video-loop"/);
-  assert.match(hero, /\.is-video-loop-fading:not\(\.is-loop-secondary-active\)\s+\.video-primary/);
+  assert.doesNotMatch(
+    hero,
+    /\.video\s*\{[^}]*transition:\s*opacity/s,
+    "only the incoming layer may animate opacity; promotion must not fade the opaque coverage away"
+  );
+  assert.match(
+    hero,
+    /\.is-video-loop-fading:not\(\.is-loop-secondary-active\)\s+\.video-primary\s*\{[^}]*opacity:\s*1;[^}]*z-index:\s*0;/s
+  );
+  assert.match(
+    hero,
+    /\.is-video-loop-fading:not\(\.is-loop-secondary-active\)\s+\.video-loop\s*\{[^}]*opacity:\s*1;[^}]*z-index:\s*1;/s
+  );
+  assert.match(
+    hero,
+    /\.is-video-loop-fading:not\(\.is-loop-secondary-active\)\s+\.video-loop\s*\{[^}]*transition:\s*opacity 1s linear;/s
+  );
+  assert.match(
+    hero,
+    /\.is-video-loop-fading\.is-loop-secondary-active\s+\.video-primary\s*\{[^}]*opacity:\s*1;[^}]*z-index:\s*1;/s
+  );
+  assert.match(
+    hero,
+    /\.is-video-loop-fading\.is-loop-secondary-active\s+\.video-primary\s*\{[^}]*transition:\s*opacity 1s linear;/s
+  );
+  assert.match(
+    hero,
+    /\.is-video-loop-fading\.is-loop-secondary-active\s+\.video-loop\s*\{[^}]*opacity:\s*1;[^}]*z-index:\s*0;/s
+  );
   assert.match(hero, /\.is-loop-secondary-active \.video-primary/);
   assert.match(hero, /background: #000;/);
   assert.match(hero, /3 Vagues & Mignardises — 55/);

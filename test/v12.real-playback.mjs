@@ -131,6 +131,7 @@ test(
             durations: players.map(player => player.duration),
             currentTimes: players.map(player => player.currentTime),
             opacities: players.map(player => Number(getComputedStyle(player).opacity)),
+            zIndexes: players.map(player => getComputedStyle(player).zIndex),
             activeSecondary: root.classList.contains("is-loop-secondary-active"),
             loopFading: root.classList.contains("is-video-loop-fading"),
             overlayOpacity: Number(getComputedStyle(document.querySelector(".transition-overlay")).opacity),
@@ -202,11 +203,24 @@ test(
             throw new Error(JSON.stringify(state));
           return state;
         }, "Pexels loop did not begin a transparent overlap");
-        await delay(100);
+        await delay(500);
         const midpoint = await videoState();
+        const incomingIndex = activeIndex === 0 ? 1 : 0;
+        const outgoingIndex = activeIndex;
+        const compositedVideoAlpha =
+          midpoint.opacities[incomingIndex] +
+          midpoint.opacities[outgoingIndex] *
+            (1 - midpoint.opacities[incomingIndex]);
         assert.equal(midpoint.loopFading, true, JSON.stringify(midpoint));
-        assert(midpoint.opacities.every(opacity => opacity > 0 && opacity < 1), JSON.stringify(midpoint));
-        assert(Math.abs(midpoint.opacities[0] + midpoint.opacities[1] - 1) < 0.08, JSON.stringify(midpoint));
+        assert.equal(midpoint.zIndexes[incomingIndex], "1", JSON.stringify(midpoint));
+        assert.equal(midpoint.zIndexes[outgoingIndex], "0", JSON.stringify(midpoint));
+        assert(midpoint.opacities[outgoingIndex] > 0.999, JSON.stringify(midpoint));
+        assert(
+          midpoint.opacities[incomingIndex] > 0.35 &&
+            midpoint.opacities[incomingIndex] < 0.65,
+          JSON.stringify(midpoint)
+        );
+        assert(compositedVideoAlpha > 0.999, JSON.stringify({ midpoint, compositedVideoAlpha }));
         assert.equal(midpoint.overlayOpacity, 0, JSON.stringify(midpoint));
         assert.equal(midpoint.posterOpacity, 0, JSON.stringify(midpoint));
         assert(midpoint.paused.every(paused => !paused), JSON.stringify(midpoint));
@@ -216,7 +230,19 @@ test(
             throw new Error(JSON.stringify(state));
           return state;
         }, "Pexels loop did not settle on the incoming live layer", 120);
-        return { started, midpoint, settled };
+        await delay(100);
+        const promoted = await videoState();
+        const promotedIncomingIndex = expectedSecondary ? 1 : 0;
+        const promotedOutgoingIndex = expectedSecondary ? 0 : 1;
+        const promotedVideoAlpha =
+          promoted.opacities[promotedIncomingIndex] +
+          promoted.opacities[promotedOutgoingIndex] *
+            (1 - promoted.opacities[promotedIncomingIndex]);
+        assert.equal(promoted.loopFading, false, JSON.stringify(promoted));
+        assert.equal(promoted.zIndexes[promotedIncomingIndex], "1", JSON.stringify(promoted));
+        assert(promoted.opacities[promotedIncomingIndex] > 0.999, JSON.stringify(promoted));
+        assert(promotedVideoAlpha > 0.999, JSON.stringify({ promoted, promotedVideoAlpha }));
+        return { started, midpoint, settled, promoted };
       };
 
       const settledAfterEightSeconds = await waitFor(async () => {
