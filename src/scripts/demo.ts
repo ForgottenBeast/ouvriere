@@ -28,7 +28,8 @@ const initialise = () => {
   const videoSourceURL = root.dataset.videoSrc || streamMp4Url;
   const variant = root.dataset.demoVariant || "v1";
   const carteVideoURL = root.dataset.carteVideoSrc;
-  const BLACK_FADE_MS = 250;
+  const BLACK_FADE_MS = 1000;
+  const VIDEO_LOOP_FADE_MS = 1000;
   const VIDEO_LOAD_TIMEOUT_MS = 5000;
   let mediaGeneration = 0;
   let finishTimer: number | undefined;
@@ -179,6 +180,42 @@ const initialise = () => {
   let transitionInFlight = false;
   let transitionTimer: number | undefined;
   let activeVideoURL = videoSourceURL;
+  let queuedVideoURL: string | undefined;
+  let loopFadeEnabled = false;
+  let loopFadeActive = false;
+
+  const clearLoopFade = () => {
+    loopFadeActive = false;
+    root.classList.remove("is-video-loop-fading");
+  };
+
+  const fadePexelsLoop = () => {
+    if (
+      !video ||
+      !loopFadeEnabled ||
+      loopFadeActive ||
+      video.paused ||
+      !Number.isFinite(video.duration) ||
+      video.duration - video.currentTime > VIDEO_LOOP_FADE_MS / 1000
+    )
+      return;
+    loopFadeActive = true;
+    root.classList.add("is-video-loop-fading");
+  };
+
+  const monitorPexelsLoop = () => {
+    if (!video || !loopFadeEnabled || loopFadeActive || video.paused) return;
+    fadePexelsLoop();
+    if (!loopFadeActive && "requestVideoFrameCallback" in video)
+      video.requestVideoFrameCallback(() => monitorPexelsLoop());
+  };
+
+  const configureVideoLoop = (sourceURL: string) => {
+    if (!video) return;
+    clearLoopFade();
+    loopFadeEnabled = variant === "v12" && sourceURL === carteVideoURL;
+    video.loop = !loopFadeEnabled;
+  };
 
   const cancelMediaTransition = () => {
     window.clearTimeout(transitionTimer);
@@ -193,6 +230,7 @@ const initialise = () => {
     }
     mediaGeneration += 1;
     const generation = mediaGeneration;
+    configureVideoLoop(newSrc);
     video.querySelectorAll("source").forEach(source => source.remove());
     const source = document.createElement("source");
     source.src = newSrc;
@@ -220,13 +258,21 @@ const initialise = () => {
   };
 
   const switchVideoUnderBlack = (newSrc: string) => {
-    if (!video || !newSrc || !mediaAllowed() || transitionInFlight) return;
+    if (!video || !newSrc || !mediaAllowed()) return;
+    if (transitionInFlight) {
+      queuedVideoURL = newSrc;
+      return;
+    }
     transitionInFlight = true;
     root.classList.add("is-black");
     const previousVideoURL = activeVideoURL;
     const finish = () => {
       video.play().catch(() => undefined);
       cancelMediaTransition();
+      const nextVideoURL = queuedVideoURL;
+      queuedVideoURL = undefined;
+      if (nextVideoURL && nextVideoURL !== activeVideoURL)
+        switchVideoUnderBlack(nextVideoURL);
     };
     const swap = () => {
       video.pause();
@@ -278,7 +324,22 @@ const initialise = () => {
     else video.pause();
   });
   video?.addEventListener("play", setPlaybackControl);
-  video?.addEventListener("pause", setPlaybackControl);
+  video?.addEventListener("play", monitorPexelsLoop);
+  video?.addEventListener("pause", () => {
+    setPlaybackControl();
+    if (loopFadeActive && !video.ended) clearLoopFade();
+  });
+  video?.addEventListener("loadedmetadata", monitorPexelsLoop);
+  video?.addEventListener("timeupdate", fadePexelsLoop);
+  video?.addEventListener("ended", () => {
+    if (!loopFadeActive) return;
+    video.currentTime = 0;
+  });
+  video?.addEventListener("seeked", () => {
+    if (!loopFadeActive || video.currentTime > 0.1) return;
+    clearLoopFade();
+    video.play().catch(() => undefined);
+  });
   video?.addEventListener("error", detachVideo);
 };
 

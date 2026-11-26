@@ -518,6 +518,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   .media {
     overflow: hidden;
     z-index: -2;
+    background: #000;
   }
   .poster,
   .video {
@@ -563,6 +564,14 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
   .video {
     position: absolute;
     inset: 0;
+    opacity: 1;
+    transition: opacity 1s linear;
+  }
+  [data-demo-root].has-video .poster {
+    opacity: 0;
+  }
+  [data-demo-root].is-video-loop-fading .video {
+    opacity: 0;
   }
   .scrim {
     z-index: -1;
@@ -575,7 +584,7 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     background: #000;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 250ms ease;
+    transition: opacity 1s ease;
   }
   .landing.is-black .transition-overlay {
     opacity: 1;

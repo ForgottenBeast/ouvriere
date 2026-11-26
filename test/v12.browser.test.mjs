@@ -10,7 +10,7 @@ const root = new URL("../", import.meta.url).pathname;
 const dist = join(root, "dist");
 const port = 43219;
 const chromePort = 9322;
-const chromium = "/run/current-system/sw/bin/chromium";
+const chromium = process.env.CHROMIUM || "chromium";
 const pexels =
   "https://videos.pexels.com/video-files/30474577/13058534_1080_1920_60fps.mp4";
 const main =
@@ -29,7 +29,11 @@ const serve = () =>
       await stat(file);
       response.setHeader(
         "Content-Type",
-        file.endsWith(".js") ? "text/javascript" : "text/html; charset=utf-8"
+        file.endsWith(".js")
+          ? "text/javascript"
+          : file.endsWith(".css")
+            ? "text/css"
+            : "text/html; charset=utf-8"
       );
       response.end(await readFile(file));
     } catch {
@@ -38,11 +42,11 @@ const serve = () =>
   });
 
 const waitFor = async (fn, message) => {
-  for (let index = 0; index < 50; index += 1) {
+  for (let index = 0; index < 80; index += 1) {
     try {
       return await fn();
     } catch {
-      await delay(100);
+      await delay(50);
     }
   }
   throw new Error(message);
@@ -78,98 +82,138 @@ const connect = async () => {
   };
 };
 
-test("v12 switches videos only after the black fade and restores the v11 source", { timeout: 30000 }, async () => {
-  const server = serve();
-  await new Promise(resolve => server.listen(port, "127.0.0.1", resolve));
-  const profile = join(tmpdir(), `ouvriere-v12-${process.pid}`);
-  const browser = spawn(chromium, [
-    "--headless=new",
-    `--remote-debugging-port=${chromePort}`,
-    `--user-data-dir=${profile}`,
-    "--no-first-run",
-    "about:blank",
-  ]);
+const snapshot = expression => `(() => (${expression}))()`;
 
-  try {
-    await waitFor(
-      () => fetch(`http://127.0.0.1:${chromePort}/json/version`),
-      "Chromium CDP did not start"
-    );
-    const cdp = await connect();
-    await cdp.send("Page.enable");
-    await cdp.send("Runtime.enable");
-    await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
-      source: `
-        HTMLMediaElement.prototype.play = () => Promise.resolve();
-        HTMLMediaElement.prototype.load = function () {
-          queueMicrotask(() => this.dispatchEvent(new Event("loadeddata")));
-        };
-      `,
-    });
-    await cdp.send("Page.navigate", { url: `http://127.0.0.1:${port}/ouvriere/v12/` });
-    await delay(500);
-    const evaluate = async expression => {
-      const result = await cdp.send("Runtime.evaluate", {
-        expression,
-        returnByValue: true,
-        awaitPromise: true,
-      });
-      return result.result.value;
-    };
-    await waitFor(async () => {
-      const source = await evaluate(
-        'document.querySelector("[data-demo-video] source")?.src'
+test(
+  "v12 fades to and from black for one second, queues rapid input, and keeps its text above the media",
+  { timeout: 30000 },
+  async () => {
+    const server = serve();
+    const profile = join(tmpdir(), `ouvriere-v12-${process.pid}`);
+    let browser;
+    let cdp;
+    await new Promise(resolve => server.listen(port, "127.0.0.1", resolve));
+
+    try {
+      browser = spawn(chromium, [
+        "--headless=new",
+        `--remote-debugging-port=${chromePort}`,
+        `--user-data-dir=${profile}`,
+        "--no-first-run",
+        "about:blank",
+      ]);
+      await waitFor(
+        () => fetch(`http://127.0.0.1:${chromePort}/json/version`),
+        "Chromium CDP did not start"
       );
-      if (!source) throw new Error("video source not attached");
-      return source;
-    }, "v12 did not attach its initial video source");
-    const initial = await evaluate(`(() => ({
-      variant: document.querySelector("[data-demo-root]").dataset.demoVariant,
-      source: document.querySelector("[data-demo-video] source")?.src,
-      text: document.body.innerText,
-    }))()`);
-    assert.equal(initial.variant, "v12");
-    assert.equal(initial.source, main);
-    assert.match(initial.text, /3 Vagues & Mignardises — 55/);
-    assert.doesNotMatch(initial.text, /Pâturage/);
+      cdp = await connect();
+      await cdp.send("Page.enable");
+      await cdp.send("Runtime.enable");
+      await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
+        source: `
+          HTMLMediaElement.prototype.play = () => Promise.resolve();
+          HTMLMediaElement.prototype.load = function () {
+            queueMicrotask(() => this.dispatchEvent(new Event("loadeddata")));
+          };
+        `,
+      });
+      await cdp.send("Page.navigate", { url: `http://127.0.0.1:${port}/ouvriere/v12/` });
+      const evaluate = async expression => {
+        const result = await cdp.send("Runtime.evaluate", {
+          expression,
+          returnByValue: true,
+          awaitPromise: true,
+        });
+        return result.result.value;
+      };
+      await waitFor(async () => {
+        const source = await evaluate(
+          'document.querySelector("[data-demo-video] source")?.src'
+        );
+        if (!source) throw new Error("video source not attached");
+        return source;
+      }, "v12 did not attach its initial video source");
 
-    const click = async selector => {
-      await evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
-    };
+      const initial = await evaluate(
+        snapshot(`({
+          variant: document.querySelector("[data-demo-root]").dataset.demoVariant,
+          source: document.querySelector("[data-demo-video] source")?.src,
+          overlayDuration: getComputedStyle(document.querySelector(".transition-overlay")).transitionDuration,
+          text: document.body.innerText
+        })`)
+      );
+      assert.equal(initial.variant, "v12");
+      assert.equal(initial.source, main);
+      assert.equal(initial.overlayDuration, "1s");
+      assert.match(initial.text, /Déguster/);
 
-    await click("[data-intro-skip]");
-    await delay(50);
-    await click("[data-open-carte]");
-    await delay(50);
-    const duringOpen = await evaluate(`(() => ({
-      black: document.querySelector("[data-demo-root]").classList.contains("is-black"),
-      carte: document.querySelector("[data-demo-root]").classList.contains("is-carte-open"),
-      complete: document.querySelector("[data-demo-root]").classList.contains("is-complete"),
-      reduced: matchMedia("(prefers-reduced-motion: reduce)").matches,
-      source: document.querySelector("[data-demo-video] source")?.src,
-    }))()`);
-    assert.equal(duringOpen.black, true, JSON.stringify(duringOpen));
-    assert.equal(duringOpen.source, main);
-    await delay(350);
-    const opened = await evaluate(`(() => ({
-      black: document.querySelector("[data-demo-root]").classList.contains("is-black"),
-      carte: document.querySelector("[data-demo-root]").classList.contains("is-carte-open"),
-      source: document.querySelector("[data-demo-video] source")?.src,
-    }))()`);
-    assert.deepEqual(opened, { black: false, carte: true, source: pexels });
+      const click = selector =>
+        evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+      const state = () =>
+        evaluate(
+          snapshot(`({
+            black: document.querySelector("[data-demo-root]").classList.contains("is-black"),
+            carte: document.querySelector("[data-demo-root]").classList.contains("is-carte-open"),
+            source: document.querySelector("[data-demo-video] source")?.src,
+            overlayOpacity: Number(getComputedStyle(document.querySelector(".transition-overlay")).opacity),
+            menuVisible: Boolean([...document.querySelectorAll(".carte-inner, .controls")].find(element => element.innerText.includes("Retour") || element.innerText.includes("Lecture / pause")))
+          })`)
+        );
 
-    await click("[data-close-carte]");
-    await delay(350);
-    const closed = await evaluate(`(() => ({
-      black: document.querySelector("[data-demo-root]").classList.contains("is-black"),
-      carte: document.querySelector("[data-demo-root]").classList.contains("is-carte-open"),
-      source: document.querySelector("[data-demo-video] source")?.src,
-    }))()`);
-    assert.deepEqual(closed, { black: false, carte: false, source: main });
-    cdp.close();
-  } finally {
-    browser.kill("SIGTERM");
-    await new Promise(resolve => browser.once("exit", resolve));
-    await new Promise(resolve => server.close(resolve));
+      await click("[data-intro-skip]");
+      await click("[data-open-carte]");
+      await delay(500);
+      const halfwayOpen = await state();
+      assert.equal(halfwayOpen.black, true, JSON.stringify(halfwayOpen));
+      assert.equal(halfwayOpen.carte, true, JSON.stringify(halfwayOpen));
+      assert.equal(halfwayOpen.source, main, JSON.stringify(halfwayOpen));
+      assert(halfwayOpen.overlayOpacity > 0 && halfwayOpen.overlayOpacity < 1, JSON.stringify(halfwayOpen));
+      assert.equal(halfwayOpen.menuVisible, true, JSON.stringify(halfwayOpen));
+
+      await delay(850);
+      const afterOpenSwap = await state();
+      assert.equal(afterOpenSwap.black, false, JSON.stringify(afterOpenSwap));
+      assert.equal(afterOpenSwap.carte, true, JSON.stringify(afterOpenSwap));
+      assert.equal(afterOpenSwap.source, pexels, JSON.stringify(afterOpenSwap));
+      assert(afterOpenSwap.overlayOpacity > 0, JSON.stringify(afterOpenSwap));
+
+      await delay(1050);
+      const opened = await state();
+      assert.equal(opened.overlayOpacity, 0, JSON.stringify(opened));
+
+      // A close while the next open fade is underway must settle on the latest requested source.
+      await click("[data-close-carte]");
+      await delay(500);
+      const halfwayClose = await state();
+      assert.equal(halfwayClose.black, true, JSON.stringify(halfwayClose));
+      assert.equal(halfwayClose.carte, false, JSON.stringify(halfwayClose));
+      assert.equal(halfwayClose.source, pexels, JSON.stringify(halfwayClose));
+      assert(halfwayClose.overlayOpacity > 0 && halfwayClose.overlayOpacity < 1, JSON.stringify(halfwayClose));
+
+      await delay(1900);
+      const closed = await state();
+      assert.equal(closed.black, false, JSON.stringify(closed));
+      assert.equal(closed.carte, false, JSON.stringify(closed));
+      assert.equal(closed.source, main, JSON.stringify(closed));
+      assert.equal(closed.overlayOpacity, 0, JSON.stringify(closed));
+
+      await click("[data-open-carte]");
+      await delay(100);
+      await click("[data-close-carte]");
+      await delay(4100);
+      const rapidlyClosed = await state();
+      assert.deepEqual(
+        rapidlyClosed,
+        { black: false, carte: false, source: main, overlayOpacity: 0, menuVisible: false },
+        JSON.stringify(rapidlyClosed)
+      );
+    } finally {
+      cdp?.close();
+      if (browser && !browser.killed) {
+        browser.kill("SIGTERM");
+        await new Promise(resolve => browser.once("exit", resolve));
+      }
+      await new Promise(resolve => server.close(resolve));
+    }
   }
-});
+);

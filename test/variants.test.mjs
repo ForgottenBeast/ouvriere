@@ -458,7 +458,9 @@ test("V12 preserves V11's presentation and music while using its own carte and b
   assert.match(hero, /"radial-menu": isRadial/);
   assert.match(hero, /\.landing\.is-black \.transition-overlay/);
   assert.match(hero, /background: #000;/);
-  assert.match(hero, /transition: opacity 250ms ease;/);
+  assert.match(hero, /transition: opacity 1s ease;/);
+  assert.match(hero, /is-video-loop-fading .video/);
+  assert.match(hero, /background: #000;/);
   assert.match(hero, /3 Vagues & Mignardises — 55/);
   assert.match(hero, /Accord Mets & Vins — 20/);
   assert.match(hero, /Accord Mets & Thés — 14/);
@@ -472,7 +474,8 @@ test("V12 preserves V11's presentation and music while using its own carte and b
   assert.match(hero, /variant === "v12"\s*\? \[\]\s*:/);
 
   assert.match(demo, /root\.dataset\.demoVariant/);
-  assert.match(demo, /const BLACK_FADE_MS = 250/);
+  assert.match(demo, /const BLACK_FADE_MS = 1000/);
+  assert.match(demo, /const VIDEO_LOOP_FADE_MS = 1000/);
   assert.match(demo, /window\.setTimeout\(swap, BLACK_FADE_MS\)/);
   assert.match(demo, /loadeddata/);
   assert.match(demo, /error/);
@@ -485,4 +488,5 @@ test("V12 preserves V11's presentation and music while using its own carte and b
     "https://videos.pexels.com/video-files/30474577/13058534_1080_1920_60fps.mp4"
   );
   assert.match(demo, /carteVideoURL = root\.dataset\.carteVideoSrc/);
+  assert.match(demo, /queuedVideoURL/);
 });

@@ -95,11 +95,13 @@ the transition. Without JavaScript the link targets `#carte`, which shows the pa
 `/v12/` keeps v11's structure but swaps the background video behind a fade-to-black overlay.
 On `Déguster` open or `Retour` / Escape close it loads the user-provided Pexels ocean loop
 (`https://videos.pexels.com/video-files/30474577/13058534_1080_1920_60fps.mp4`) and plays that
-while the overlay fades in, then restores the Stream source and fades out. The transition uses
-a media load timeout, a 250 ms fade overlay, and a generation counter so rapid toggles cannot
-cross-switch sources. Reduced motion, Save-Data, autoplay rejection, and load timeouts retain
-the poster fallback. The v12 tasting menu drops the `Pâturage` supplement block and shows the
-original prices for Rivage, Grand Large, and Pleine Mer.
+while the overlay fades in for one second, then restores the Stream source behind a one-second
+fade out. The Pexels loop fades its video layer down to the black media backing for one second
+before rewinding, then fades back up for one second; the text and controls stay above that media
+fade. The transition uses a media load timeout, a generation counter, and a latest-request queue
+so rapid toggles settle on the requested source. Reduced motion, Save-Data, autoplay rejection,
+and load timeouts retain the poster fallback. The v12 tasting menu drops the `Pâturage` supplement
+block and shows the original prices for Rivage, Grand Large, and Pleine Mer.
 
 The video or poster background gets a slight blur when text starts appearing. Tune the blur
 and contrast scrim from Chrome DevTools captures so the white text remains legible while the
