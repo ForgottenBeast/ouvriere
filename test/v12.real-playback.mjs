@@ -40,14 +40,16 @@ const serve = () =>
   });
 
 const waitFor = async (fn, message, attempts = 240) => {
+  let lastError;
   for (let index = 0; index < attempts; index += 1) {
     try {
       return await fn();
-    } catch {
+    } catch (error) {
+      lastError = error;
       await delay(50);
     }
   }
-  throw new Error(message);
+  throw new Error(`${message}: ${lastError instanceof Error ? lastError.message : lastError}`);
 };
 
 const connect = async () => {
@@ -119,26 +121,27 @@ test(
       const videoState = () =>
         evaluate(`(() => {
           const root = document.querySelector("[data-demo-root]");
-          const video = document.querySelector("[data-demo-video]");
+          const players = [...document.querySelectorAll("[data-demo-video], [data-demo-video-loop]")];
           const carte = document.querySelector("[data-demo-carte]");
           return {
-            source: video.querySelector("source")?.src,
-            paused: video.paused,
-            readyState: video.readyState,
-            width: video.videoWidth,
-            height: video.videoHeight,
-            duration: video.duration,
-            currentTime: video.currentTime,
-            loop: video.loop,
+            sources: players.map(player => player.querySelector("source")?.src),
+            paused: players.map(player => player.paused),
+            readyStates: players.map(player => player.readyState),
+            dimensions: players.map(player => [player.videoWidth, player.videoHeight]),
+            durations: players.map(player => player.duration),
+            currentTimes: players.map(player => player.currentTime),
+            opacities: players.map(player => Number(getComputedStyle(player).opacity)),
+            activeSecondary: root.classList.contains("is-loop-secondary-active"),
             loopFading: root.classList.contains("is-video-loop-fading"),
-            videoOpacity: Number(getComputedStyle(video).opacity),
+            overlayOpacity: Number(getComputedStyle(document.querySelector(".transition-overlay")).opacity),
+            posterOpacity: Number(getComputedStyle(document.querySelector(".poster")).opacity),
             carteTextVisible: getComputedStyle(carte).visibility === "visible" && carte.innerText.includes("3 Vagues & Mignardises")
           };
         })()`);
 
       await waitFor(async () => {
         const state = await videoState();
-        if (!state.source) throw new Error("initial video source was not attached");
+        if (!state.sources[0]) throw new Error("initial video source was not attached");
         return state;
       }, "v12 did not attach its initial source");
       await evaluate('document.querySelector("[data-intro-skip]").click()');
@@ -147,57 +150,92 @@ test(
       const playingPexels = await waitFor(async () => {
         const state = await videoState();
         if (
-          state.source !== pexels ||
-          state.paused ||
-          state.readyState < 2 ||
-          state.width === 0 ||
-          state.height === 0 ||
-          !Number.isFinite(state.duration) ||
-          state.duration <= 2
+          state.sources.length !== 2 ||
+          state.sources.some(source => source !== pexels) ||
+          state.paused[0] ||
+          !state.paused[1] ||
+          state.readyStates.some(readyState => readyState < 2) ||
+          state.dimensions.some(([width, height]) => width === 0 || height === 0) ||
+          state.durations.some(duration => !Number.isFinite(duration) || duration <= 2) ||
+          state.overlayOpacity > 0.01
         )
           throw new Error(JSON.stringify(state));
         return state;
-      }, "Pexels video did not reach real playable state");
-      assert.equal(playingPexels.loop, false, JSON.stringify(playingPexels));
+      }, "both Pexels layers did not reach real playable state");
       assert.equal(playingPexels.carteTextVisible, true, JSON.stringify(playingPexels));
+      assert(playingPexels.overlayOpacity < 0.01, JSON.stringify(playingPexels));
+      assert.equal(playingPexels.posterOpacity, 0, JSON.stringify(playingPexels));
 
       await evaluate('document.querySelector("[data-video-toggle]").click()');
       const pausedByControl = await waitFor(async () => {
         const state = await videoState();
-        if (!state.paused) throw new Error(JSON.stringify(state));
+        if (state.paused.some(paused => !paused)) throw new Error(JSON.stringify(state));
         return state;
-      }, "the video pause control did not pause Pexels playback");
+      }, "the video pause control did not pause both Pexels layers");
       assert.equal(pausedByControl.carteTextVisible, true, JSON.stringify(pausedByControl));
       await evaluate('document.querySelector("[data-video-toggle]").click()');
       await waitFor(async () => {
         const state = await videoState();
-        if (state.paused) throw new Error(JSON.stringify(state));
+        if (state.paused[0] || !state.paused[1]) throw new Error(JSON.stringify(state));
         return state;
-      }, "the video pause control did not resume Pexels playback");
+      }, "the video pause control did not resume both Pexels layers");
 
-      await evaluate(`(() => {
-        const video = document.querySelector("[data-demo-video]");
-        video.currentTime = video.duration - 1.15;
-        return video.play();
-      })()`);
-      const fadeStarted = await waitFor(async () => {
-        const state = await videoState();
-        if (!state.loopFading || state.currentTime < state.duration - 1.2)
-          throw new Error(JSON.stringify(state));
-        return state;
-      }, "Pexels loop did not begin its one-second video fade");
-      assert.equal(fadeStarted.carteTextVisible, true, JSON.stringify(fadeStarted));
+      // Let real Pexels frames advance for eight seconds before forcing two observed overlaps.
+      await delay(8000);
+      const afterEightSeconds = await videoState();
+      assert(
+        afterEightSeconds.currentTimes.some(currentTime => currentTime > 7) ||
+          afterEightSeconds.loopFading ||
+          afterEightSeconds.activeSecondary,
+        JSON.stringify(afterEightSeconds)
+      );
 
-      const replayed = await waitFor(async () => {
+      const observeOverlap = async (activeIndex, expectedSecondary) => {
+        await evaluate(`(() => {
+          const players = [...document.querySelectorAll("[data-demo-video], [data-demo-video-loop]")];
+          players[${activeIndex}].currentTime = players[${activeIndex}].duration - 1.15;
+          return players[${activeIndex}].play();
+        })()`);
+        const started = await waitFor(async () => {
+          const state = await videoState();
+          if (!state.loopFading || state.currentTimes[activeIndex] < state.durations[activeIndex] - 1.2)
+            throw new Error(JSON.stringify(state));
+          return state;
+        }, "Pexels loop did not begin a transparent overlap");
+        await delay(100);
+        const midpoint = await videoState();
+        assert.equal(midpoint.loopFading, true, JSON.stringify(midpoint));
+        assert(midpoint.opacities.every(opacity => opacity > 0 && opacity < 1), JSON.stringify(midpoint));
+        assert(Math.abs(midpoint.opacities[0] + midpoint.opacities[1] - 1) < 0.08, JSON.stringify(midpoint));
+        assert.equal(midpoint.overlayOpacity, 0, JSON.stringify(midpoint));
+        assert.equal(midpoint.posterOpacity, 0, JSON.stringify(midpoint));
+        assert(midpoint.paused.every(paused => !paused), JSON.stringify(midpoint));
+        const settled = await waitFor(async () => {
+          const state = await videoState();
+          if (state.loopFading || state.activeSecondary !== expectedSecondary || state.paused[expectedSecondary ? 1 : 0])
+            throw new Error(JSON.stringify(state));
+          return state;
+        }, "Pexels loop did not settle on the incoming live layer", 120);
+        return { started, midpoint, settled };
+      };
+
+      const settledAfterEightSeconds = await waitFor(async () => {
         const state = await videoState();
-        if (state.loopFading || state.currentTime > 0.35 || state.paused)
-          throw new Error(JSON.stringify(state));
+        if (state.loopFading) throw new Error(JSON.stringify(state));
         return state;
-      }, "Pexels video did not restart after the fade", 120);
-      assert.equal(replayed.source, pexels, JSON.stringify(replayed));
-      assert.equal(replayed.carteTextVisible, true, JSON.stringify(replayed));
-      assert(replayed.videoOpacity < 1, JSON.stringify(replayed));
-      console.log("v12 real loop evidence", JSON.stringify({ fadeStarted, replayed }));
+      }, "the natural eight-second playback did not settle its first overlap", 120);
+
+      const firstActiveIndex = settledAfterEightSeconds.activeSecondary ? 1 : 0;
+      const firstLoop = await observeOverlap(
+        firstActiveIndex,
+        firstActiveIndex === 0
+      );
+      const secondLoop = await observeOverlap(
+        firstActiveIndex === 0 ? 1 : 0,
+        firstActiveIndex !== 0
+      );
+      assert.equal(secondLoop.settled.carteTextVisible, true, JSON.stringify(secondLoop));
+      console.log("v12 real transparent loop evidence", JSON.stringify({ afterEightSeconds, firstLoop, secondLoop }));
     } finally {
       cdp?.close();
       if (browser && !browser.killed) {

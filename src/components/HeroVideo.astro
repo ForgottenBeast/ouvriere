@@ -166,12 +166,25 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     />
     <video
       data-demo-video
-      class="video"
+      data-demo-video-primary
+      class="video video-primary"
       muted
       loop
       playsinline
       preload="none"
       poster={posterURL}></video>
+    {
+      variant === "v12" && (
+        <video
+          data-demo-video-loop
+          class="video video-loop"
+          muted
+          playsinline
+          preload="none"
+          poster={posterURL}
+        />
+      )
+    }
   </div>
   <div class="scrim" aria-hidden="true"></div>
   <div class="transition-overlay" aria-hidden="true"></div>
@@ -567,10 +580,29 @@ const timelineStyle = `--title-in-start:${titleInStart}ms;--title-in-duration:${
     opacity: 1;
     transition: opacity 1s linear;
   }
+  .video-loop,
+  [data-demo-root].is-loop-secondary-active .video-primary {
+    opacity: 0;
+  }
+  [data-demo-root].is-loop-secondary-active .video-loop {
+    opacity: 1;
+  }
   [data-demo-root].has-video .poster {
     opacity: 0;
   }
-  [data-demo-root].is-video-loop-fading .video {
+  [data-demo-root].is-video-loop-fading:not(.is-loop-secondary-active)
+    .video-primary {
+    opacity: 0;
+  }
+  [data-demo-root].is-video-loop-fading:not(.is-loop-secondary-active)
+    .video-loop {
+    opacity: 1;
+  }
+  [data-demo-root].is-video-loop-fading.is-loop-secondary-active
+    .video-primary {
+    opacity: 1;
+  }
+  [data-demo-root].is-video-loop-fading.is-loop-secondary-active .video-loop {
     opacity: 0;
   }
   .scrim {

@@ -10,6 +10,9 @@ const initialise = () => {
   if (!root) return;
 
   const video = root.querySelector<HTMLVideoElement>("[data-demo-video]");
+  const loopVideo = root.querySelector<HTMLVideoElement>(
+    "[data-demo-video-loop]"
+  );
   const toggle = root.querySelector<HTMLButtonElement>("[data-video-toggle]");
   const audio = root.querySelector<HTMLAudioElement>("[data-demo-audio]");
   const audioToggle = root.querySelector<HTMLButtonElement>(
@@ -33,13 +36,17 @@ const initialise = () => {
   const VIDEO_LOAD_TIMEOUT_MS = 5000;
   let mediaGeneration = 0;
   let finishTimer: number | undefined;
+  let activeVideo = video;
+  let loopFadeEnabled = false;
+  let loopFadeActive = false;
+  let loopMonitorTimer: number | undefined;
   const introCompletion =
     Number(root.dataset.introCompletion) ||
     DEMO_TIMELINE.menuItemIn[DEMO_TIMELINE.menuItemIn.length - 1][1];
 
   const setPlaybackControl = () => {
-    if (!video || !toggle) return;
-    const paused = video.paused;
+    if (!activeVideo || !toggle) return;
+    const paused = activeVideo.paused;
     toggle.textContent = paused ? "Lire la vidéo" : "Mettre la vidéo en pause";
     toggle.setAttribute("aria-pressed", String(!paused));
   };
@@ -77,7 +84,15 @@ const initialise = () => {
     mediaGeneration += 1;
     if (!video) return;
     const toggleWasFocused = toggle === document.activeElement;
-    video.pause();
+    [video, loopVideo].filter(Boolean).forEach(player => {
+      player?.pause();
+      player?.querySelectorAll("source").forEach(source => source.remove());
+      player?.load();
+    });
+    activeVideo = video;
+    loopFadeEnabled = false;
+    loopFadeActive = false;
+    root.classList.remove("is-video-loop-fading", "is-loop-secondary-active");
     const sources = video.querySelectorAll("source");
     if (sources.length === 0) {
       root.classList.remove("has-video");
@@ -87,8 +102,6 @@ const initialise = () => {
         document.getElementById("mentions-trigger")?.focus();
       return;
     }
-    sources.forEach(source => source.remove());
-    video.load();
     root.classList.remove("has-video");
     toggle?.setAttribute("aria-hidden", "true");
     if (toggle) toggle.tabIndex = -1;
@@ -181,40 +194,83 @@ const initialise = () => {
   let transitionTimer: number | undefined;
   let activeVideoURL = videoSourceURL;
   let queuedVideoURL: string | undefined;
-  let loopFadeEnabled = false;
-  let loopFadeActive = false;
 
   const clearLoopFade = () => {
+    window.clearTimeout(loopMonitorTimer);
+    loopMonitorTimer = undefined;
     loopFadeActive = false;
     root.classList.remove("is-video-loop-fading");
+  };
+
+  const isLoopVideo = (player: HTMLVideoElement | null) =>
+    Boolean(loopVideo && player === loopVideo);
+
+  const settleLoop = () => {
+    if (!video || !loopVideo || !activeVideo || !loopFadeActive) return;
+    const outgoing = activeVideo;
+    const incoming = outgoing === video ? loopVideo : video;
+    outgoing.pause();
+    outgoing.currentTime = 0;
+    activeVideo = incoming;
+    clearLoopFade();
+    root.classList.toggle("is-loop-secondary-active", isLoopVideo(activeVideo));
+    setPlaybackControl();
+    monitorPexelsLoop();
   };
 
   const fadePexelsLoop = () => {
     if (
       !video ||
+      !loopVideo ||
       !loopFadeEnabled ||
       loopFadeActive ||
-      video.paused ||
-      !Number.isFinite(video.duration) ||
-      video.duration - video.currentTime > VIDEO_LOOP_FADE_MS / 1000
+      !activeVideo ||
+      activeVideo.paused ||
+      !Number.isFinite(activeVideo.duration) ||
+      activeVideo.duration - activeVideo.currentTime > VIDEO_LOOP_FADE_MS / 1000
     )
       return;
-    loopFadeActive = true;
-    root.classList.add("is-video-loop-fading");
+    const incoming = activeVideo === video ? loopVideo : video;
+    incoming.currentTime = 0;
+    incoming
+      .play()
+      .then(() => {
+        if (
+          !loopFadeEnabled ||
+          incoming !== (activeVideo === video ? loopVideo : video)
+        )
+          return;
+        loopFadeActive = true;
+        root.classList.add("is-video-loop-fading");
+      })
+      .catch(() => detachVideo());
   };
 
   const monitorPexelsLoop = () => {
-    if (!video || !loopFadeEnabled || loopFadeActive || video.paused) return;
+    if (
+      !activeVideo ||
+      !loopFadeEnabled ||
+      loopFadeActive ||
+      activeVideo.paused
+    )
+      return;
     fadePexelsLoop();
-    if (!loopFadeActive && "requestVideoFrameCallback" in video)
-      video.requestVideoFrameCallback(() => monitorPexelsLoop());
+    if (!loopFadeActive && loopMonitorTimer === undefined)
+      loopMonitorTimer = window.setTimeout(() => {
+        loopMonitorTimer = undefined;
+        monitorPexelsLoop();
+      }, 50);
   };
 
   const configureVideoLoop = (sourceURL: string) => {
     if (!video) return;
     clearLoopFade();
-    loopFadeEnabled = variant === "v12" && sourceURL === carteVideoURL;
+    activeVideo = video;
+    root.classList.remove("is-loop-secondary-active");
+    loopFadeEnabled =
+      variant === "v12" && sourceURL === carteVideoURL && Boolean(loopVideo);
     video.loop = !loopFadeEnabled;
+    if (loopVideo) loopVideo.loop = false;
   };
 
   const cancelMediaTransition = () => {
@@ -231,30 +287,52 @@ const initialise = () => {
     mediaGeneration += 1;
     const generation = mediaGeneration;
     configureVideoLoop(newSrc);
-    video.querySelectorAll("source").forEach(source => source.remove());
-    const source = document.createElement("source");
-    source.src = newSrc;
-    source.type = "video/mp4";
-    video.append(source);
-    video.load();
+    const players = loopFadeEnabled && loopVideo ? [video, loopVideo] : [video];
+    if (loopVideo && !loopFadeEnabled) {
+      loopVideo.pause();
+      loopVideo.querySelectorAll("source").forEach(source => source.remove());
+      loopVideo.load();
+    }
+    players.forEach(player => {
+      player.pause();
+      player.querySelectorAll("source").forEach(source => source.remove());
+      const source = document.createElement("source");
+      source.src = newSrc;
+      source.type = "video/mp4";
+      player.append(source);
+      player.load();
+    });
 
     let settled = false;
+    let remaining = players.length;
+    const listeners = new Map<
+      HTMLVideoElement,
+      { loaded: () => void; error: () => void }
+    >();
     const settle = (loaded: boolean) => {
       if (settled || generation !== mediaGeneration) return;
       settled = true;
       window.clearTimeout(timeout);
-      video.removeEventListener("loadeddata", onLoaded);
-      video.removeEventListener("error", onError);
+      listeners.forEach(({ loaded: onLoaded, error: onError }, player) => {
+        player.removeEventListener("loadeddata", onLoaded);
+        player.removeEventListener("error", onError);
+      });
       onSettled(loaded);
     };
-    const onLoaded = () => settle(true);
-    const onError = () => settle(false);
     const timeout = window.setTimeout(
       () => settle(false),
       VIDEO_LOAD_TIMEOUT_MS
     );
-    video.addEventListener("loadeddata", onLoaded, { once: true });
-    video.addEventListener("error", onError, { once: true });
+    players.forEach(player => {
+      const onLoaded = () => {
+        remaining -= 1;
+        if (remaining === 0) settle(true);
+      };
+      const onError = () => settle(false);
+      listeners.set(player, { loaded: onLoaded, error: onError });
+      player.addEventListener("loadeddata", onLoaded, { once: true });
+      player.addEventListener("error", onError, { once: true });
+    });
   };
 
   const switchVideoUnderBlack = (newSrc: string) => {
@@ -267,7 +345,7 @@ const initialise = () => {
     root.classList.add("is-black");
     const previousVideoURL = activeVideoURL;
     const finish = () => {
-      video.play().catch(() => undefined);
+      activeVideo?.play().catch(() => undefined);
       cancelMediaTransition();
       const nextVideoURL = queuedVideoURL;
       queuedVideoURL = undefined;
@@ -319,28 +397,56 @@ const initialise = () => {
   });
   skip?.addEventListener("click", () => setFinalState(true));
   toggle?.addEventListener("click", () => {
-    if (!video) return;
-    if (video.paused) video.play().catch(() => undefined);
-    else video.pause();
+    if (!activeVideo) return;
+    const players =
+      loopFadeActive && video && loopVideo ? [video, loopVideo] : [activeVideo];
+    if (activeVideo.paused)
+      players.forEach(player => player.play().catch(() => undefined));
+    else players.forEach(player => player.pause());
   });
-  video?.addEventListener("play", setPlaybackControl);
-  video?.addEventListener("play", monitorPexelsLoop);
-  video?.addEventListener("pause", () => {
-    setPlaybackControl();
-    if (loopFadeActive && !video.ended) clearLoopFade();
+  [video, loopVideo].filter(Boolean).forEach(player => {
+    player?.addEventListener("play", () => {
+      setPlaybackControl();
+      monitorPexelsLoop();
+    });
+    player?.addEventListener("pause", () => {
+      setPlaybackControl();
+      if (loopFadeActive && player === activeVideo) {
+        if (
+          Number.isFinite(player.duration) &&
+          player.currentTime >= player.duration
+        ) {
+          settleLoop();
+        } else {
+          clearLoopFade();
+        }
+      }
+    });
+    player?.addEventListener("loadedmetadata", monitorPexelsLoop);
+    player?.addEventListener("seeked", monitorPexelsLoop);
+    player?.addEventListener("timeupdate", () => {
+      fadePexelsLoop();
+      if (
+        loopFadeActive &&
+        activeVideo &&
+        activeVideo.paused &&
+        Number.isFinite(activeVideo.duration) &&
+        activeVideo.duration - activeVideo.currentTime <= 0.05
+      )
+        settleLoop();
+      else if (
+        loopFadeActive &&
+        player === activeVideo &&
+        Number.isFinite(player.duration) &&
+        player.duration - player.currentTime <= 0.05
+      )
+        settleLoop();
+    });
+    player?.addEventListener("ended", settleLoop);
+    player?.addEventListener("error", () => {
+      if (player.querySelector("source")) detachVideo();
+    });
   });
-  video?.addEventListener("loadedmetadata", monitorPexelsLoop);
-  video?.addEventListener("timeupdate", fadePexelsLoop);
-  video?.addEventListener("ended", () => {
-    if (!loopFadeActive) return;
-    video.currentTime = 0;
-  });
-  video?.addEventListener("seeked", () => {
-    if (!loopFadeActive || video.currentTime > 0.1) return;
-    clearLoopFade();
-    video.play().catch(() => undefined);
-  });
-  video?.addEventListener("error", detachVideo);
 };
 
 initialise();

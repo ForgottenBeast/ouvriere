@@ -459,7 +459,12 @@ test("V12 preserves V11's presentation and music while using its own carte and b
   assert.match(hero, /\.landing\.is-black \.transition-overlay/);
   assert.match(hero, /background: #000;/);
   assert.match(hero, /transition: opacity 1s ease;/);
-  assert.match(hero, /is-video-loop-fading .video/);
+  assert.match(hero, /data-demo-video-primary/);
+  assert.match(hero, /data-demo-video-loop/);
+  assert.match(hero, /class="video video-primary"/);
+  assert.match(hero, /class="video video-loop"/);
+  assert.match(hero, /\.is-video-loop-fading:not\(\.is-loop-secondary-active\)\s+\.video-primary/);
+  assert.match(hero, /\.is-loop-secondary-active \.video-primary/);
   assert.match(hero, /background: #000;/);
   assert.match(hero, /3 Vagues & Mignardises — 55/);
   assert.match(hero, /Accord Mets & Vins — 20/);
